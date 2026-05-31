@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Directory</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="Images/cyb-cruise-group-logo-1.png.png" alt="CRUISE GROUP Logo" class="nav-logo" width="250" height="250">
+           
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="directory.html" class="active">Class Lists</a></li>
+        </ul>
+    </nav>
+
+
+
+<main class="container">
+    <div class="search-container">
+        <h2>Class Lists Database</h2>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Query parameters support strict
+            name matching strings or registration patterns.</p>
+        <input type="text" id="searchInput" placeholder="Search Name or Reg Number...">
+        <button id="searchBtn" class="btn">Search</button>
+    </div>
+
+    <div id="actionControls" class="action-controls">
+        <button id="printPdfBtn" class="btn btn-secondary">🖨️ Export to PDF</button>
+        <button id="exportExcelBtn" class="btn btn-secondary">📊 Export to Excel (CSV)</button>
+
+
+        <div class="search-container" style="margin-top: 20px; border-top: 1px dashed #1d2d5a; padding-top: 20px;">
+           e <h3 style="margin-bottom: 10px; font-size: 1.1rem; color: #94a3b8;">👑 Course Rep Master Controls</h3>
+            <button id="masterExcelBtn" class="btn" style="background-color: #0d6efd;">📊 Download Full Class Excel</button>
+            <button id="masterPdfBtn" class="btn btn-secondary" style="background-color: #198754;">🖨️ Print Full Class
+                PDF</button>
+        </div>
+    </div>
+
+    <div id="results" class="results-container"></div>
+
+    <h3>System Audit Logs</h3>
+    <div id="auditLog" class="audit-log-panel">
+        <div class="log-entry">[SYSTEM] Secure directory interface initialized.</div>
+    </div>
+</main>
+
+
+    <div class="footer">
+        <small>
+            &copy; 2026 CYB CRUISE GROUP || All rights reserved || <br>
+    
+            Created by {FABIAN CODES HQ} for CYB CLASS OF 2024/2025 (SET). <br>
+        </small>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
