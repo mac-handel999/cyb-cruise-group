@@ -49,7 +49,7 @@ function sanitizeInput(rawString) {
  */
 async function loadStudentData() {
     try {
-        logSecurityEvent("Requesting secure roster matrix payload...");
+        logSecurityEvent("Requesting secure class list matrix payload...");
         const response = await fetch('class-list.enc'); // Or 'database.enc'
         
         if (!response.ok) {
@@ -62,7 +62,7 @@ async function loadStudentData() {
         logSecurityEvent("Security Handshake complete. Dataset decrypted into buffer.");
     } catch (error) {
         logSecurityEvent(`CRITICAL: Database load failure.`, 'warn');
-        document.getElementById('results').innerHTML = `<p class="error">Data matrix decryption error.</p>`;
+        document.getElementById('results').innerHTML = `<p class="error">Class list data matrix decryption error.</p>`;
     }
 }
 
@@ -179,14 +179,14 @@ function compileAndDownloadCSV(dataset, filename) {
 // Handler for filtered search results export (Now Protected)
 function exportFilteredExcel() {
     if (!authenticateCourseRep()) return; // Auth check wrapper
-    compileAndDownloadCSV(currentlyFilteredStudents, `CYB_Filtered_List.csv`);
+    compileAndDownloadCSV(currentlyFilteredStudents, `CYB_Class_List.csv`);
     logSecurityEvent("Export Successful: Filtered data downloaded.");
 }
 
 // Protected Master Excel Export
 function exportMasterExcel() {
     if (!authenticateCourseRep()) return; // Auth check wrapper
-    compileAndDownloadCSV(studentDatabase, `CRUISE_GROUP_CYB_2024_MASTER_ROSTER.csv`);
+    compileAndDownloadCSV(studentDatabase, `CYB_2024/2025_CLASS_LISTS.csv`);
     logSecurityEvent("ADMIN COMPLIANCE: Full master roster file generated.");
 }
 

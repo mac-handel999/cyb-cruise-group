@@ -51,10 +51,121 @@ body {
     border-radius: 4px; /* Optional: rounds the edges of your logo if it's square */
 }
 
+
+
+/* Container styling for the navigation wrapper */
+.nav-ur {
+    width: 100%;
+    background-color: #0b132b;
+    /* Matches your project's Deep Dark-Blue theme */
+    border-bottom: 2px solid #800020;
+    /* Brand Ox-Blood accent bar */
+    padding: 10px 0;
+    overflow: hidden;
+    /* Ensures nothing leaks out of the primary container boundaries */
+}
+
+/* The Link Track List Engine */
+.nav-links {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0;
+    padding: 0 15px;
+    /* Side padding so edges don't hug screen boundaries on mobile scroll */
+    list-style: none;
+
+    /* Responsive Overflow Mechanics */
+    overflow-x: auto;
+    /* Activates horizontal scrolling when content spans wider than viewport */
+    overflow-y: hidden;
+    /* Blocks vertical layout slipping */
+    white-space: nowrap;
+    /* Forces all <li> items to sit firmly on a single continuous line */
+
+    /* Smooth Scroll Momentum Configuration */
+    -webkit-overflow-scrolling: touch;
+    /* Kinetic rubber-band scrolling for iOS/Android engines */
+    scroll-snap-type: x mandatory;
+    /* Snap alignments for touchscreen tracks */
+    gap: 15px;
+    /* Clean tracking space between independent links */
+}
+
+/* Hide ugly default browser scrollbars while preserving native swipe functionality */
+.nav-links::-webkit-scrollbar {
+    display: none;
+    /* Safely hides trackbar on Chrome, Safari, and mobile IDE viewports */
+}
+
+.nav-links {
+    -ms-overflow-style: none;
+    /* IE and Edge wrapper mitigation */
+    scrollbar-width: none;
+    /* Firefox profile optimization */
+}
+
+/* Independent List Structural Components */
+.nav-links li {
+    scroll-snap-align: start;
+    /* Locks individual link alignments firmly on swiping */
+    display: inline-block;
+}
+
+/* The Hyperlink Action Items */
+.nav-links a {
+    display: block;
+    color: #cbd5e1;
+    /* Off-white color for structural readability */
+    text-decoration: none;
+    font-family: 'Courier New', Courier, monospace;
+    /* Security Operations theme typography */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    /* Defensive Mobile Scaling Paradigm */
+    font-size: 0.85rem;
+    /* Downscaled base font so more menu items populate mobile space immediately */
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+/* Active State & Desktop Interaction Points */
+.nav-links a:hover,
+.nav-links a.active {
+    color: #ffffff;
+    background-color: #800020;
+    /* Signature brand Ox-Blood highlighting indicator */
+    box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+    /* Soft tactical cyber glow aura */
+}
+
+/* Media Query Optimization for larger screens */
+@media (min-width: 768px) {
+    .nav-links {
+        justify-content: center;
+        /* Centers navigation array perfectly on desktop layouts */
+        overflow-x: visible;
+        /* Disables scroll-tracking dependencies on large monitors */
+        gap: 25px;
+        padding-left: 350px;
+         /* Resets padding for desktop where space is abundant */
+    }
+
+    .nav-links a {
+        font-size: 0.95rem;
+        /* Restores standard high-resolution display font density */
+    }
+}
+
+
+/* 
 .nav-links {
     display: flex;
     /* flex-wrap: wrap; */
-    list-style: none;
+    /* list-style: none;
     gap: 20px;
 }
 
@@ -68,7 +179,7 @@ body {
 .nav-links a:hover, .nav-links a.active {
     color: var(--text-light);
     border-bottom: 2px solid var(--oxblood);
-}
+} */ */
 
 /* Layout Containers */
 .container {
@@ -232,6 +343,110 @@ input[type="text"]:focus {
     .student-card { border: 1px solid #ccc; background: #fff; color: #000; box-shadow: none; page-break-inside: avoid; }
     .student-card h3, .student-card p { color: #000; }
 }
+
+
+
+
+
+
+
+/* //for app features */
+
+
+/* Core Section Wrapper */
+.features {
+    margin: 10px;
+    padding: 20px 10px;
+}
+
+/* Section Header Typography (e.g., "APP FEATURES") */
+#features-text {
+    color: #ffffff;
+    font-family: 'Courier New', Courier, monospace;
+    /* High-tech terminal look */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+    /* Cyan cyber glow */
+    border-bottom: 2px solid #800020;
+    /* Ox-Blood underline accent */
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+/* Master Layout Grid Container */
+.features-container {
+    margin: 20px auto;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    /* Auto-responsive layout */
+    gap: 20px;
+    max-width: 1200px;
+}
+
+/* Individual Feature Grid Cards */
+.features-list {
+    margin: 0;
+    padding: 25px 20px;
+    background: #0b132b;
+    /* Deep Dark-Blue background */
+    border: 1px solid #1c2541;
+    /* Subtle structural border */
+    text-align: center;
+    border-radius: 12px;
+    /* Clean, modern radius */
+    color: #cbd5e1;
+    /* Off-white for high-readability body text */
+
+    /* Smooth transition matrix handling hardware performance acceleration */
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    /* Subtle deep shadow to anchor the elements */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.5);
+
+    /* Secure typography layout */
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+/* Features Header Tags inside the cards */
+.features-list h3 {
+    color: #00d4ff;
+    /* Technical Cyan for actionable visibility */
+    margin-bottom: 12px;
+    font-size: 1.25rem;
+}
+
+/* Interactive SOC State Hover Animations */
+.features-list:hover,
+.img-for-hero:hover {
+    background: #800020;
+    /* Shifts smoothly to brand Ox-Blood on hover */
+    border-color: #00d4ff;
+    /* Neon cyan indicator line edge highlight */
+    color: #ffffff;
+
+    /* Subtle upward float vector instead of sudden horizontal jumps */
+    transform: translateY(-8px);
+
+    /* High-tech tactical cyber glow */
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+
+    /* Slightly tightens the border radius to look alert, without completely squaring it */
+    border-radius: 4px;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
