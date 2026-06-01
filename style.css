@@ -45,8 +45,8 @@ body {
 
 /* New Image Logo Styling */
 .nav-logo {
-    width: 150px;
-    height: 150px;
+    width: 250px;
+    height: 250px;
     object-fit: contain;
     border-radius: 4px; /* Optional: rounds the edges of your logo if it's square */
 }
@@ -253,7 +253,22 @@ input[type="text"]:focus {
     margin-top: 20px;
     border-radius: 20px;
     border: 2px solid #fff;
+    box-shadow: 2px 3px 3px #000 ;
 
+}
+
+.hero-image:hover {
+ width: 300px;
+ height: 280px;
+ object-fit: contain;
+ margin-top: 20px;
+ border-radius: 100px;
+ border: 3px solid #1d2d5a;
+ transform: translateX(-8px);
+/*  transition: width ease-in-out 0.3ms;
+transition: border-radius ease-in-out 0.3ms; */
+ transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+ box-shadow: 2px 3px 3px #fff;
 }
 
 /* Cards & Layouts */
@@ -276,6 +291,11 @@ input[type="text"]:focus {
 .hero-section p {
     color: var(--text-muted);
     margin-bottom: 25px;
+}
+
+.container {
+    margin-top: 30px;
+    padding: 25px;
 }
 
 .search-container {
@@ -357,6 +377,7 @@ input[type="text"]:focus {
 .features {
     margin: 10px;
     padding: 20px 10px;
+    text-align: center;
 }
 
 /* Section Header Typography (e.g., "APP FEATURES") */
@@ -372,6 +393,7 @@ input[type="text"]:focus {
     /* Ox-Blood underline accent */
     padding-bottom: 8px;
     display: inline-block;
+    text-align: center;
 }
 
 /* Master Layout Grid Container */

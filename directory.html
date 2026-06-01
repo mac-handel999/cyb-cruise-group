@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Directory</title>
     <link rel="stylesheet" href="style.css">
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar">
@@ -21,12 +23,15 @@
 
 
 <main class="container">
-    <div class="search-container">
+    <div class="search-container" data-aos="zoom-in-right" data-aos-duration="3000">
         <h2>CYB 2024/2025 SET Class Lists Database</h2>
         <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Query parameters support strict
             name matching strings or registration patterns.</p>
-        <input type="text" id="searchInput" placeholder="Search Name or Reg Number...">
-        <button id="searchBtn" class="btn">Search</button>
+        <input type="text" id="searchInput" placeholder="Search Name or Reg Number..." data-aos="fade-right"
+data-aos-duration="3000"
+>
+        <button id="searchBtn" class="btn" data-aos="fade-left"
+data-aos-duration="3000">Search</button>
     </div>
 
     <div id="actionControls" class="action-controls">
@@ -34,18 +39,20 @@
         <button id="exportExcelBtn" class="btn btn-secondary">📊 Export to Excel (CSV)</button>
 
 
-        <div class="search-container" style="margin-top: 20px; border-top: 1px dashed #1d2d5a; padding-top: 20px;">
+        <div class="search-container" style="margin-top: 20px; border-top: 1px dashed #1d2d5a; padding-top: 20px;" data-aos="zoom-out-up" data-aos-duraion="3000">
+         
            <h3 style="margin-bottom: 10px; font-size: 1.1rem; color: #94a3b8;">👑 Course Rep Master Controls</h3>
+            
             <button id="masterExcelBtn" class="btn" style="background-color: #0d6efd;">📊 Download Full Class Excel</button>
             <button id="masterPdfBtn" class="btn btn-secondary" style="background-color: #198754;">🖨️ Print Full Class
                 PDF</button>
         </div>
     </div>
 
-    <div id="results" class="results-container"></div>
+    <div id="results" class="results-container" data-aos="zoom-in-left" data-aos-duration="3000"></div>
 
     <h3>System Audit Logs</h3>
-    <div id="auditLog" class="audit-log-panel">
+<div id="auditLog" class="audit-log-panel"  data-aos="fade-right" data-aos-duration="3000">
         <div class="log-entry">[SYSTEM] Secure directory interface initialized.</div>
     </div>
 </main>
@@ -60,5 +67,12 @@
     </div>
 
     <script src="main.js"></script>
+    
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+  <script>
+    AOS.init();
+</script>
 </body>
 </html>
