@@ -24,7 +24,7 @@ function reportStatus(message, isError = false) {
 async function initAuthHandshake() {
     try {
         reportStatus("Fetching database handshake signals...");
-        const response = await fetch('/class-list.enc');
+        const response = await fetch('class-list.enc');
         if (!response.ok) throw new Error();
         
         const encryptedData = await response.text();
@@ -65,7 +65,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
         localStorage.setItem('cruise_user_reg', studentIdentified.regNumber);
         
         setTimeout(() => {
-            window.location.href = '/Home.html'; // Grant gateway entry
+            window.location.href = 'Home.html'; // Grant gateway entry
         }, 1000);
     } else {
         reportStatus("ACCESS DENIED: Credentials mismatch detected.", true);

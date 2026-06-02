@@ -9,7 +9,7 @@
     <script>
         // SECURITY GUARD: Kick out anyone who doesn't have an active session token
         if (!localStorage.getItem('cruise_session_token') || !localStorage.getItem('cruise_user_reg')) {
-            window.location.href = 'auth/index.html';
+            window.location.href = 'index.html';
         }
     </script>
     
@@ -71,7 +71,7 @@
                 localStorage.removeItem('cruise_user_reg');
 
                 // Redirect back to login terminal screen
-                window.location.href = 'auth/index.html';
+                window.location.href = 'index.html';
             });
         }
     });
