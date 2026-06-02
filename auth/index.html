@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYB CRUISE GROUP | Authentication Terminal</title>
+    
+
+
+    <script>
+        // If the user already has a valid token, skip the login screen and send them inside
+        if (localStorage.getItem('cruise_session_token') && localStorage.getItem('cruise_user_reg')) {
+            window.location.href = '/Home.html';
+        }
+    </script>
+
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   
+
+    
+</head>
+
+<body>
+
+    
+    <div class="login-matrix">
+
+        <img src="/Images/cyb-cruise-group-logo-1.png.png" alt="CRUISE GROUP Logo" class="nav-logo" width="250" height="250" id="loginLogo">
+
+        <h2 id="features-text" style="margin-bottom: 5px;">IDENTITY GATEWAY</h2>
+        <p style="color: #cbd5e1; font-family: monospace; font-size: 0.8rem; margin-bottom: 30px;">CYB CRUISE LAYER
+            CHECKPOINT</p>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label for="studentName"><i class="fa fa-user"></i> Student Full Name</label>
+                <input type="text" id="studentName" class="input-field" placeholder="SURNAME FIRSTNAME OTHERS" required
+                    autocomplete="off">
+            </div>
+
+            <div class="input-group">
+                <label for="studentReg"><i class="fa fa-vcard"></i> Registration Number</label>
+                <input type="text" id="studentReg" class="input-field" placeholder="202414XXXXX" required
+                    autocomplete="off">
+            </div>
+
+            <button type="submit" class="auth-btn">Authorize Session</button>
+        </form>
+
+        <div id="statusReport" class="status-terminal">SYSTEM STATUS: READY</div>
+    </div>
+
+    
+
+    <script src="auth.js"></script>
+    <!-- <script src="/main.js"></script> -->
+</body>
+
+</html>

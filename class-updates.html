@@ -4,20 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>class updates</title>
+   
+    <script>
+        // SECURITY GUARD: Kick out anyone who doesn't have an active session token
+        if (!localStorage.getItem('cruise_session_token') || !localStorage.getItem('cruise_user_reg')) {
+            window.location.href = 'auth/index.html';
+        }
+    </script>
+   
+   
     <link rel="stylesheet" href="style.css">
     
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <link rel="stylesheet" href="class-updates.css" title="" type="text/css" />
+
+
+
 </head>
 <body>
+
+
+
+
+
+
     <nav class="navbar">
         <div class="nav-brand">
             <img src="Images/cyb-cruise-group-logo-1.png.png" alt="CRUISE GROUP Logo" class="nav-logo" width="250" height="250">
            
         </div>
         <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
+            <li><a href="Home.html">Home</a></li>
             <li><a href="class-updates.html" class="active">Class Updates</a></li>
         </ul>
     </nav>  <br>
@@ -41,6 +59,8 @@
 
 
   <div class="footer">
+
+    <li><a href="#" id="logoutBtn" style="color: #ff3333;"><i class="fa fa-power-off"></i> LOGOUT</a></li>
         <small>
             &copy; 2026 CYB CRUISE GROUP || All rights reserved || <br>
     
@@ -48,7 +68,7 @@
         </small>
     </div>
 
-    <!-- <script src="main.js"></script> -->
+    <script src="main.js"></script>
     
     
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -57,6 +77,27 @@
     
   <script>
     AOS.init();
+</script>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function (e) {
+                e.preventDefault(); // Stop the default link transition
+
+                // Scrub credentials out of local storage matrix
+                localStorage.removeItem('cruise_session_token');
+                localStorage.removeItem('cruise_user_reg');
+
+                // Redirect back to login terminal screen
+                window.location.href = 'auth/index.html';
+            });
+        }
+    });
 </script>
 </body>
 </html>

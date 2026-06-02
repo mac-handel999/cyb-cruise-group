@@ -1,5 +1,34 @@
 // // 
 
+/**
+ * CRITICAL ACCESS CONTROL ROUTE GUARD
+ * Injected at runtime to check hardware configuration credentials.
+ */
+function verifySessionIntegrity() {
+    const localToken = localStorage.getItem('cruise_session_token');
+    const localReg = localStorage.getItem('cruise_user_reg');
+    
+    // If no session token is saved in their phone/laptop browser, boot them back out to login
+    if (!localToken || !localReg) {
+        window.location.href = 'auth/index.html';
+    }
+}
+
+// Run protection evaluation instantly on layout boot
+verifySessionIntegrity();
+
+
+
+
+
+//for login page, we will implement a simple authentication mechanism that checks the user's credentials against a predefined list of authorized course representatives. This will ensure that only those with the correct registration numbers can access the export functionalities.
+
+
+
+
+
+
+
 // Global memory state for tracking the student database array
 let studentDatabase = [];
 let currentlyFilteredStudents = []; 
