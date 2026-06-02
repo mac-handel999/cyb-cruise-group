@@ -150,7 +150,7 @@ body {
         overflow-x: visible;
         /* Disables scroll-tracking dependencies on large monitors */
         gap: 25px;
-        padding-left: 350px;
+        padding-left: 670px;
          /* Resets padding for desktop where space is abundant */
     }
 
@@ -160,6 +160,10 @@ body {
     }
 }
 
+a {
+    text-decoration: none;
+    color:green
+}
 
 /* 
 .nav-links {
