@@ -1,9 +1,14 @@
 /* Custom Multi-Column Grid Configuration for Feed Arrays */
 .updates-grid {
+    margin: 30px;
     display: grid;
+    padding: 20px;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 25px;
     width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 /* Structural modifications specifically for update components inside list cards */
@@ -11,6 +16,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-items: center;
+    padding: 20px;
 }
 
 /* Ensure injected banner assets remain responsive */
