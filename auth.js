@@ -57,20 +57,26 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     );
     
     if (studentIdentified) {
-        reportStatus("Identity Verified! Syncing token matrix...");
-        
-        // Compute token and bind to device LocalStorage space
-        const sessionToken = await generateDeviceToken(inputName, inputReg);
-        localStorage.setItem('cruise_session_token', sessionToken);
-        localStorage.setItem('cruise_user_reg', studentIdentified.regNumber);
-        
-        setTimeout(() => {
-            window.location.href = 'Home.html'; // Grant gateway entry
-        }, 1000);
-    } else {
-        reportStatus("ACCESS DENIED: Credentials mismatch detected.", true);
-    }
-});
-
+    reportStatus("Identity Verified! Syncing token matrix...");
+    
+    const sessionToken = await generateDeviceToken(inputName, inputReg);
+    
+    // Scramble the values using Base64 obfuscation before storing
+    const scrambledToken = btoa(sessionToken);
+    const scrambledReg = btoa(studentIdentified.regNumber);
+    const scrambledName = btoa(studentIdentified.name);
+    const scrambledTime = btoa(Date.now().toString());
+    
+    // Save the unreadable data blocks to localStorage
+    localStorage.setItem('cruise_session_token', scrambledToken);
+    localStorage.setItem('cruise_user_reg', scrambledReg);
+    localStorage.setItem('cruise_user_name', scrambledName);
+    localStorage.setItem('cruise_login_time', scrambledTime);
+    
+    setTimeout(() => {
+        window.location.href = 'Home.html'; 
+    }, 1000);
+}
+})
 // Run payload load instantly on boot
 initAuthHandshake();

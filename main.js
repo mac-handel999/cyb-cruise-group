@@ -10,7 +10,7 @@ function verifySessionIntegrity() {
     
     // If no session token is saved in their phone/laptop browser, boot them back out to login
     if (!localToken || !localReg) {
-        window.location.href = 'auth/index.html';
+        window.location.href = 'index.html';
     }
 }
 
@@ -28,6 +28,51 @@ verifySessionIntegrity();
 
 
 
+
+
+
+
+//for user name display
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const badgeElement = document.getElementById('identityBadge');
+    const scrambledName = localStorage.getItem('cruise_user_name');
+    
+    if (badgeElement && scrambledName) {
+        try {
+            // Unscramble the name cleanly on the fly for UI presentation
+            const realName = atob(scrambledName);
+            
+            badgeElement.innerHTML = `<i class="fa fa-user-circle"></i> LOGGED IN AS HACKER 👨‍💻: <span style="color: #ffffff; font-weight: bold;">${realName.toUpperCase()}</span>`;
+        } catch (error) {
+            console.error("Identity vector corruption detected.");
+        }
+    }
+});
+
+
+
+
+
+// document.addEventListener('DOMContentLoaded', () => {
+    
+    
+//     const badgeElement = document.getElementById('identityBadge');
+//     const storedName = localStorage.getItem('cruise_user_name');
+    
+//     if (badgeElement && storedName) {
+//         badgeElement.innerHTML = `<i class="fa fa-user-circle"></i> LOGGED IN AS HACKER 👨‍💻: <span style="color: #ffffff; font-weight: bold;">${storedName.toUpperCase()}</span>`;
+//     }
+// });
+
+
+
+
+
+
+
+//for the class list page section
 
 // Global memory state for tracking the student database array
 let studentDatabase = [];

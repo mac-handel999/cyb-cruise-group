@@ -8,12 +8,42 @@
     
 
 
-    <script>
-        // If the user already has a valid token, skip the login screen and send them inside
-        if (localStorage.getItem('cruise_session_token') && localStorage.getItem('cruise_user_reg')) {
-            window.location.href = 'Home.html';
+<script>
+    (function enforceAccessControl() {
+        const localToken = localStorage.getItem('cruise_session_token');
+        const localReg = localStorage.getItem('cruise_user_reg');
+        const loginTime = localStorage.getItem('cruise_login_time');
+        
+        const currentPath = window.location.pathname;
+        const onLoginPage = currentPath.endsWith('index.html') || currentPath.endsWith('/');
+
+        // Define the expiration lifespan: 3 Days = 3 * 24 * 60 * 60 * 1000 milliseconds
+        const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+
+        if (!localToken || !localReg || !loginTime) {
+            if (!onLoginPage) window.location.href = 'index.html';
+        } else {
+            // Check if token age exceeds 3 days
+            const sessionAge = Date.now() - parseInt(loginTime);
+            
+            if (sessionAge > THREE_DAYS_MS) {
+                if (!onLoginPage) {
+                    // Wipe credentials and flag the expiration before redirecting
+                    localStorage.removeItem('cruise_session_token');
+                    localStorage.removeItem('cruise_user_reg');
+                    localStorage.removeItem('cruise_user_name');
+                    localStorage.removeItem('cruise_login_time');
+                    
+                    alert("SESSION EXPIRED: Security tokens must be rotated every 3 days. Please re-authenticate at the login terminal.");
+                    window.location.href = 'index.html';
+                }
+            } else {
+                if (onLoginPage) window.location.href = 'Home.html';
+            }
         }
-    </script>
+    })();
+</script>
+
 
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="login.css">
