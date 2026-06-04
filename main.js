@@ -1,5 +1,31 @@
 // // 
 
+
+//for the log out btn logic
+
+document.addEventListener('DOMContentLoaded', () => {
+        const logoutBtn = document.getElementById('logoutBtn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function (e) {
+                e.preventDefault(); // Stop the default link transition
+
+                // Scrub credentials out of local storage matrix
+                localStorage.removeItem('cruise_session_token');
+                localStorage.removeItem('cruise_user_reg');
+                
+                alert('You Have Successfully Logged Out!!! ');
+
+
+                // Redirect back to login terminal screen
+                window.location.href = '/index.html';
+            });
+        }
+    });
+
+
+
+
+
 /**
  * CRITICAL ACCESS CONTROL ROUTE GUARD
  * Injected at runtime to check hardware configuration credentials.

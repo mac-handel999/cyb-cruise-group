@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYB CRUISE | Submission Grid</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="admin-global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <script>
+    if (!localStorage.getItem('cruise_admin_token') || !localStorage.getItem('cruise_admin_time')) {
+        window.location.href = 'admin-gate.html';
+    }
+</script>
+
+
+</head>
+<body>
+    
+   <nav class="navbar">
+        <div class="nav-brand">
+            <img src="/Images/cyb-cruise-group-logo-1.png.png" alt="CRUISE GROUP Logo" class="nav-logo" width="250" height="250">
+           
+        </div>
+        <ul class="nav-links">
+            <li><a href="/Home.html">Home</a></li>
+            <li><a href="submissions.html" class="active">Class Submissions Portal</a></li>
+        </ul>
+    </nav>  <br>
+
+    <div class="sub-container">
+        <header style="display:flex; justify-content:between; align-items:center; margin-bottom:25px;" class="no-print">
+            <div>
+                <a href="admin-dashboard.html" style="color:#00d4ff; text-decoration:none;"><i class="fa fa-arrow-left"></i> BACK TO CORE</a>
+                <h2 style="margin:5px 0 0 0;">📦 ASSIGNMENT & LAB MANUAL SUBMISSIONS MATRIX</h2>
+            </div>
+            <button class="btn-action" onclick="clearSectionRecords('submissions')" style="background:#4a0e17; margin-left:auto;">RESET DATA</button>
+        </header>
+
+        <div class="control-panel no-print">
+            <h4 style="margin:0; color:#00d4ff;"><i class="fa fa-folder-open"></i> REGISTER NEW ASSIGNMENT TRACKING SLOT</h4>
+            <div class="input-row">
+                <input type="text" id="subTitle" class="input-box" placeholder="e.g., Cos 202 Assignment or Manual Submission">
+                <button class="btn-action" onclick="createNewTaskRecord('submissions', 'subTitle')">DEPLOY TARGET</button>
+            </div>
+        </div>
+
+        <div id="submissionContainer"></div>
+    </div>
+
+
+
+
+
+  <div class="footer">
+      
+      <div style="margin-top: 50px; padding: 20px; text-align: center; border-top: 1px solid #1c2541; font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">
+ 
+    <div id="identityBadge" style="color: #00d4ff; margin-top: 5px;">
+        <i class="fa fa-shield"></i> SECURE MATRIX NODE ACTIVE
+    </div>
+</div>
+
+    <li><a href="#" id="logoutBtn" style="color: #ff3333;"><i class="fa fa-power-off"></i> LOGOUT</a></li>
+        <small>
+            &copy; 2026 CYB CRUISE GROUP || All rights reserved || <br>
+    
+            Created by {FABIAN CODES HQ} for CYB CLASS OF 2024/2025 (SET). <br>
+        </small>
+    </div>
+
+
+
+
+
+<script src="/main.js"></script>
+    <script src="admin-core.js"></script>
+   
+   <script type="text/javascript" charset="utf-8">
+               //for submission page logic
+        
+  let masterRoster = [];
+
+        async function initPage() {
+            const response = await fetch('/class-list.enc');
+            const encryptedData = await response.text();
+            masterRoster = JSON.parse(atob(encryptedData.trim()));
+            renderSubmissionsLayout();
+        }
+
+        function renderSubmissionsLayout() {
+            const container = document.getElementById('submissionContainer');
+            const db = loadAdminMatrix();
+            container.innerHTML = "";
+
+            if (!db.submissions || db.submissions.length === 0) {
+                container.innerHTML = `<div class='metric-card'>[!] NO ACTIVE ASSIGNMENT TRACKING CATEGORIES DEPLOYED</div>`;
+                return;
+            }
+
+            db.submissions.forEach(task => {
+                const metrics = computeTaskMetrics(task.students.length);
+                const block = document.createElement('div');
+                block.className = 'task-block';
+                block.innerHTML = `
+                    <div class="task-header">
+                        <div>
+                            <strong style="font-size:1.1rem; color:#fff;">${task.title.toUpperCase()}</strong><br>
+                            <small style="color:#00d4ff;"><i class="fa fa-clock-o"></i> Opened: ${task.date}</small>
+                        </div>
+                        <div class="no-print" style="display:flex; gap:10px;">
+                            <button class="btn-action" style="padding:6px 12px; font-size:0.8rem; background:#118ab2;" onclick="copyListToClipboard('${task.title}', 'Submitted', ${JSON.stringify(task.students)}, ${JSON.stringify(masterRoster)})"><i class="fa fa-whatsapp"></i> COPY WHATSAPP</button>
+                            <button class="btn-action" style="padding:6px 12px; font-size:0.8rem; background:#06d6a0;" onclick="window.print()"><i class="fa fa-print"></i> EXPORT REPORT</button>
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-bar" style="padding:15px; background:#050b14; border-bottom:1px solid #1c2541;">
+                        <div class="metric-card">🟢 SUBMITTED: <strong style="color:#06d6a0;">${metrics.completed}</strong></div>
+                        <div class="metric-card">🔴 PENDING SUBMISSIONS: <strong style="color:#800020;">${metrics.pending}</strong></div>
+                        <div class="metric-card">🧑‍💻 TOTAL EXPECTED: <strong>${metrics.totalClass}</strong></div>
+                    </div>
+
+                    <div class="no-print" style="padding:15px; background:rgba(255,255,255,0.01); border-bottom:1px solid #1c2541;">
+                        <input type="text" class="input-box" placeholder="🔎 Search Name/Reg to log a file collection..." oninput="filterSubmissionSearch(this, '${task.id}')">
+                        <div class="search-output-bin" id="searchBin_${task.id}" style="margin-top:10px; max-height:200px; overflow-y:auto;"></div>
+                    </div>
+
+                    <div id="list_${task.id}" style="max-height:300px; overflow-y:auto;">
+                        ${renderActiveSubmittedRows(task.id, task.students)}
+                    </div>
+                `;
+                container.appendChild(block);
+            });
+        }
+
+        function renderActiveSubmittedRows(taskId, studentArray) {
+            if (studentArray.length === 0) return `<div style="padding:15px; color:#cbd5e1; text-align:center;">No submissions logged into ledger.</div>`;
+            return studentArray.map(reg => {
+                const match = masterRoster.find(s => s.regNumber === reg);
+                return `
+                    <div class="student-row">
+                        <span>✅ ${match ? match.name.toUpperCase() : "UNKNOWN NODE"} (${reg})</span>
+                        <button class="btn-action no-print" style="background:#4a0e17; padding:4px 10px; font-size:0.75rem;" onclick="processToggle('${taskId}', '${reg}')">REMOVE</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterSubmissionSearch(inputEl, taskId) {
+            const query = inputEl.value.trim().toLowerCase();
+            const bin = document.getElementById(`searchBin_${taskId}`);
+            bin.innerHTML = "";
+            if (query.length < 2) return;
+
+            const matches = masterRoster.filter(s => s.name.toLowerCase().includes(query) || s.regNumber.includes(query)).slice(0, 5);
+            matches.forEach(student => {
+                const row = document.createElement('div');
+                row.className = 'student-row';
+                row.style.background = '#050b14';
+                row.innerHTML = `
+                    <span>${student.name.toUpperCase()} (${student.regNumber})</span>
+                    <button class="btn-action" style="padding:5px 10px; font-size:0.8rem; background:#06d6a0;" onclick="processToggle('${taskId}', '${student.regNumber}'); document.getElementById('searchBin_${taskId}').innerHTML='';">LOG FILE</button>
+                `;
+                bin.appendChild(row);
+            });
+        }
+
+        function processToggle(taskId, regNum) {
+            toggleStudentInTask('submissions', taskId, regNum);
+            renderSubmissionsLayout();
+        }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+   </script>
+</body>
+</html>
+

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYB CRUISE | Handout Finance Matrix</title>
+    <link rel="stylesheet" href="/style.css">
+    
+    <link rel="stylesheet" href="admin-global.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+<script>
+    if (!localStorage.getItem('cruise_admin_token') || !localStorage.getItem('cruise_admin_time')) {
+        window.location.href = 'admin-gate.html';
+    }
+</script>
+
+    
+</head>
+<body>
+    
+   <nav class="navbar">
+        <div class="nav-brand">
+            <img src="/Images/cyb-cruise-group-logo-1.png.png" alt="CRUISE GROUP Logo" class="nav-logo" width="250" height="250">
+           
+        </div>
+        <ul class="nav-links">
+            <li><a href="/Home.html">Home</a></li>
+            <li><a href="payments.html" class="active">Class Payments Terminal</a></li>
+        </ul>
+    </nav>  <br>
+
+    <div class="sub-container">
+        <header style="display:flex; justify-content:between; align-items:center; margin-bottom:25px;" class="no-print">
+            <div>
+                <a href="admin-dashboard.html" style="color:#00d4ff; text-decoration:none;"><i class="fa fa-arrow-left"></i> BACK TO DASHBOARD</a>
+                <h2 style="margin:5px 0 0 0;">💵 MATERIALS LOGISTICS & TEXTBOOK PAYMENTS LAYER</h2>
+            </div>
+            <button class="btn-action" onclick="clearSectionRecords('payments')" style="background:#4a0e17; margin-left:auto;">WIPE LEDGER</button>
+        </header>
+
+        <div class="control-panel no-print">
+            <h4 style="margin:0; color:#00d4ff;"><i class="fa fa-money"></i> DEPLOY NEW HANDOUT PROCUREMENT BALANCER</h4>
+            <div class="input-row">
+                <input type="text" id="payTitle" class="input-box" placeholder="e.g., Cyb 203 Textbook & Manual">
+                <button class="btn-action" onclick="createNewTaskRecord('payments', 'payTitle')">DEPLOY MATERIAL</button>
+            </div>
+        </div>
+
+        <div id="paymentsContainer"></div>
+    </div>
+
+  
+  
+  
+  
+  
+    <div class="footer">
+      
+      <div style="margin-top: 50px; padding: 20px; text-align: center; border-top: 1px solid #1c2541; font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">
+ 
+    <div id="identityBadge" style="color: #00d4ff; margin-top: 5px;">
+        <i class="fa fa-shield"></i> SECURE MATRIX NODE ACTIVE
+    </div>
+</div>
+
+    <li><a href="#" id="logoutBtn" style="color: #ff3333;"><i class="fa fa-power-off"></i> LOGOUT</a></li>
+        <small>
+            &copy; 2026 CYB CRUISE GROUP || All rights reserved || <br>
+    
+            Created by {FABIAN CODES HQ} for CYB CLASS OF 2024/2025 (SET). <br>
+        </small>
+    </div>
+
+
+
+
+
+<script src="/main.js"></script>
+  
+  
+  
+  
+  
+    <script src="admin-core.js"></script>
+   
+   
+    <script>
+        let masterRoster = [];
+
+        async function initPage() {
+            const response = await fetch('/class-list.enc');
+            const encryptedData = await response.text();
+            masterRoster = JSON.parse(atob(encryptedData.trim()));
+            renderPaymentsLayout();
+        }
+
+        function renderPaymentsLayout() {
+            const container = document.getElementById('paymentsContainer');
+            const db = loadAdminMatrix();
+            container.innerHTML = "";
+
+            if (!db.payments || db.payments.length === 0) {
+                container.innerHTML = `<div class='metric-card'>[!] NO ACTIVE HANDOUT ACCOUNTABILITY SLOTS REGISTERED</div>`;
+                return;
+            }
+
+            db.payments.forEach(task => {
+                const paidMetrics = computeTaskMetrics(task.paidStudents ? task.paidStudents.length : 0);
+                const collectedMetrics = computeTaskMetrics(task.collectedStudents ? task.collectedStudents.length : 0);
+
+                const block = document.createElement('div');
+                block.className = 'task-block';
+                block.innerHTML = `
+                    <div class="task-header">
+                        <div>
+                            <strong style="font-size:1.1rem; color:#fff;">${task.title.toUpperCase()}</strong><br>
+                            <small style="color:#00d4ff;"><i class="fa fa-usd"></i> Financial Audit Tracking Block</small>
+                        </div>
+                        <div class="no-print" style="display:flex; gap:10px;">
+                            <button class="btn-action" style="padding:6px 12px; font-size:0.8rem; background:#118ab2;" onclick="copyListToClipboard('${task.title}', 'Fully Paid', ${JSON.stringify(task.paidStudents || [])}, ${JSON.stringify(masterRoster)})"><i class="fa fa-whatsapp"></i> COPY WHATSAPP</button>
+                            <button class="btn-action" style="padding:6px 12px; font-size:0.8rem; background:#06d6a0;" onclick="window.print()"><i class="fa fa-print"></i> EXPORT SHEET</button>
+                        </div>
+                    </div>
+                    
+                    <div class="metrics-bar" style="padding:12px; background:#050b14; border-bottom:1px solid #1c2541;">
+                        <div class="metric-card">💰 PAID: <strong style="color:#06d6a0;">${paidMetrics.completed}</strong></div>
+                        <div class="metric-card">⏳ UNPAID: <strong style="color:#800020;">${paidMetrics.pending}</strong></div>
+                        <div class="metric-card">📦 DISTRIBUTED: <strong style="color:#00d4ff;">${collectedMetrics.completed}</strong></div>
+                        <div class="metric-card">⚠️ UNDELIVERED: <strong style="color:#ffb703;">${collectedMetrics.pending}</strong></div>
+                    </div>
+
+                    <div class="no-print" style="padding:15px; background:rgba(255,255,255,0.01); border-bottom:1px solid #1c2541;">
+                        <input type="text" class="input-box" placeholder="🔎 Search Student to inject into active handout ledger..." oninput="filterPaymentSearch(this, '${task.id}')">
+                        <div class="search-output-bin" id="searchBin_${task.id}" style="margin-top:10px; max-height:200px; overflow-y:auto;"></div>
+                    </div>
+
+                    <div class="student-row" style="background:#050b14; color:#00d4ff; font-weight:bold; border-bottom:1px solid #1c2541;">
+                        <span>STUDENT IDENTIFICATION NODE</span>
+                        <div>PAY STATUS</div>
+                        <div>HANDOUT DELIVERY</div>
+                        <div class="no-print">WIPE</div>
+                    </div>
+
+                    <div id="list_${task.id}" style="max-height:350px; overflow-y:auto;">
+                        ${renderActivePaymentRows(task)}
+                    </div>
+                `;
+                container.appendChild(block);
+            });
+        }
+
+        function renderActivePaymentRows(task) {
+            const paidArr = task.paidStudents || [];
+            const collectedArr = task.collectedStudents || [];
+            
+            // Union array set list of everyone locked into this ledger
+            const unifiedRegSet = Array.from(new Set([...paidArr, ...collectedArr]));
+
+            if (unifiedRegSet.length === 0) return `<div style="padding:15px; color:#cbd5e1; text-align:center;">No transaction fields logged.</div>`;
+            
+            return unifiedRegSet.map(reg => {
+                const match = masterRoster.find(s => s.regNumber === reg);
+                const isPaid = paidArr.includes(reg);
+                const isCollected = collectedArr.includes(reg);
+
+                return `
+                    <div class="student-row">
+                        <span>💳 ${match ? match.name.toUpperCase() : "UNKNOWN IDENTITY"} (${reg})</span>
+                        <div>
+                            <button class="status-toggle-btn" style="background:${isPaid?'#06d6a0':'#4a0e17'}; color:${isPaid?'#0b132b':'#fff'};" onclick="toggleSubProperty('payments', '${task.id}', '${reg}', 'paidStudents')">${isPaid?'PAID':'UNPAID'}</button>
+                        </div>
+                        <div>
+                            <button class="status-toggle-btn" style="background:${isCollected?'#00d4ff':'#ffb703'}; color:#0b132b;" onclick="toggleSubProperty('payments', '${task.id}', '${reg}', 'collectedStudents')">${isCollected?'COLLECTED':'PENDING'}</button>
+                        </div>
+                        <div class="no-print">
+                            <button class="btn-action" style="background:#4a0e17; padding:4px 8px; font-size:0.75rem;" onclick="removeEntirelyFromLog('${task.id}', '${reg}')"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterPaymentSearch(inputEl, taskId) {
+            const query = inputEl.value.trim().toLowerCase();
+            const bin = document.getElementById(`searchBin_${taskId}`);
+            bin.innerHTML = "";
+            if (query.length < 2) return;
+
+            const matches = masterRoster.filter(s => s.name.toLowerCase().includes(query) || s.regNumber.includes(query)).slice(0, 5);
+            matches.forEach(student => {
+                const row = document.createElement('div');
+                row.className = 'student-row';
+                row.style.background = '#050b14';
+                row.style.display = 'flex';
+                row.style.justifyContent = 'space-between';
+                row.innerHTML = `
+                    <span>${student.name.toUpperCase()} (${student.regNumber})</span>
+                    <button class="btn-action" style="padding:5px 10px; font-size:0.8rem; background:#06d6a0;" onclick="toggleSubProperty('payments', '${taskId}', '${student.regNumber}', 'paidStudents'); document.getElementById('searchBin_${taskId}').innerHTML='';">LOG ENTRY</button>
+                `;
+                bin.appendChild(row);
+            });
+        }
+
+        function toggleSubProperty(sectionKey, taskId, regNum, arrayProperty) {
+            toggleStudentInTask(sectionKey, taskId, regNum, arrayProperty);
+            renderPaymentsLayout();
+        }
+
+        function removeEntirelyFromLog(taskId, regNum) {
+            const db = loadAdminMatrix();
+            const task = db.payments.find(t => t.id === taskId);
+            if(task) {
+                task.paidStudents = (task.paidStudents || []).filter(r => r !== regNum);
+                task.collectedStudents = (task.collectedStudents || []).filter(r => r !== regNum);
+                saveAdminMatrix(db);
+                renderPaymentsLayout();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

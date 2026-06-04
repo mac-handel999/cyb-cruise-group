@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYB CRUISE | Admin Gate</title>
+    <link rel="stylesheet" href="/style.css">
+    
+    <script type="text/javascript" charset="utf-8">
+       
+    // Only skip if a valid 3-day token is already active
+    if (localStorage.getItem('cruise_admin_token') && localStorage.getItem('cruise_admin_time')) {
+        window.location.href = 'admin-dashboard.html';
+    }
+
+
+    </script>
+</head>
+<body style="background:#050b14; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0;">
+
+    <div class="features-list" style="max-width:400px; text-align:center; border-color:#800020;">
+        
+        <img src="/Images/cyb-cruise-group-logo-1.png.png" alt="CRUISE GROUP Logo" class="nav-logo" width="250" height="250" id="loginLogo">
+        
+        
+        <h3 style="color:#ffffff; font-family:monospace;">🔑 ADMIN PRIVILEGE CHALLENGE</h3>
+        <p style="color:#cbd5e1; font-size:0.85rem; font-family:monospace;">ENTER LEVEL-2 SECTOR PASSPHRASE</p>
+        
+        <input type="password" id="passphraseInput" placeholder="••••••••••••" style="width:100%; padding:12px; background:#050b14; border:1px solid #1c2541; color:#fff; border-radius:8px; margin:20px 0; text-align:center; font-family:monospace;">
+        
+        <button id="authAdminBtn" class="btn" style="background:#800020; width:100%; border-radius:8px; padding:12px; font-family:monospace; color:#fff;">VALIDATE VECTOR</button>
+        <div id="gateStatus" style="margin-top:15px; color:#00d4ff; font-family:monospace; font-size:0.75rem;"></div>
+    </div>
+
+    <script>
+// Ensure this helper function exists at the top of your script block
+async function sha256(string) {
+    const utf8 = new TextEncoder().encode(string);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+        document.getElementById('authAdminBtn').addEventListener('click', async () => {
+            const input = document.getElementById('passphraseInput').value;
+            const status = document.getElementById('gateStatus');
+            const targetHash = 
+            "6a24503fc9856b0a28d17f85b2b89a2d8465ed27a293c8a9b2967097117caa4d";// Replace with your target hash
+             
+            
+            status.textContent = "Computing cryptographic block...";
+            const inputHash = await sha256(input);
+
+            if (inputHash === targetHash) {
+    status.style.color = "#00d4ff";
+    status.textContent = "Access Verified. Committing keys to disk layout...";
+    
+    // 1. Force state updates into localStorage
+    localStorage.setItem('cruise_admin_token', btoa("authorized_reps_active"));
+    localStorage.setItem('cruise_admin_time', btoa(String(Date.now())));
+    
+    // 2. Add an explicit delay (800ms) to ensure mobile flash storage completes the sync operation
+    setTimeout(() => {
+        status.textContent = "Routing to administrative command deck...";
+        
+        // Final safety double-check: ensure keys are written before breaking the page state
+        if (localStorage.getItem('cruise_admin_token')) {
+            window.location.href = 'admin-dashboard.html';
+        } else {
+            status.style.color = "#ff3333";
+            status.textContent = "Disk write lag detected. Retrying terminal link...";
+            window.location.href = 'admin-dashboard.html';
+        }
+    }, 800);
+
+} else {
+    status.style.color = "#ff3333";
+    status.textContent = "INVALID PASSPHRASE. AUTHENTICATION FAILURE.";
+}
+
+        })
+        
+        
+        
+        document.getElementById('authAdminBtn').addEventListener('click', async () => {
+    const input = document.getElementById('passphraseInput').value;
+    const status = document.getElementById('gateStatus');
+    
+    status.textContent = "Computing cryptographic block...";
+    const inputHash = await sha256(input);
+
+    if (inputHash === targetHash) {
+        status.style.color = "#00d4ff";
+        status.textContent = "Access Verified. Provisioning 3-Day Session...";
+        
+        // 1. Generate an obfuscated 3-day validation flag and timestamp
+        const scrambledFlag = btoa("authorized_reps_active");
+        const scrambledTime = btoa(Date.now().toString());
+
+        // 2. Commit seamlessly to localStorage for persistence across browser closings
+        localStorage.setItem('cruise_admin_token', scrambledFlag);
+        localStorage.setItem('cruise_admin_time', scrambledTime);
+        
+        document.getElementById('passphraseInput').value = "";
+        
+        setTimeout(() => { 
+            window.location.href = 'admin-dashboard.html'; 
+        }, 600);
+    } else {
+        status.style.color = "#800020";
+        status.textContent = "INVALID PASSPHRASE. AUTHENTICATION FAILURE.";
+    }
+});
+
+    </script>
+    
+   <script src="/auth.js"></script>
+    
+    <script src="admin-guard.js
+    "></script>
+</body>
+</html>
