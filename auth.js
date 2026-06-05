@@ -74,7 +74,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
     localStorage.setItem('cruise_login_time', scrambledTime);
     
     setTimeout(() => {
-        window.location.href = 'Home.html'; 
+        window.location.href = '/Home.html'; 
     }, 1000);
 }
 })
