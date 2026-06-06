@@ -1,7 +1,22 @@
 // 1. Establish Real-Time Stream from the Payments Database Node
+// Locate your live database reference listener in payments.js
 database.ref('management/payments').on('value', (snapshot) => {
-    const paymentsData = snapshot.val() || {};
-    renderPaymentsUI(paymentsData);
+    const rawDataObject = snapshot.val();
+    const cleanStudentsArray = [];
+
+    // Safety Guard: Check if the database path has records
+    if (rawDataObject) {
+        // Convert the Firebase object keys/values into a structured array
+        Object.keys(rawDataObject).forEach((key) => {
+            cleanStudentsArray.push({
+                id: key,                       // The database key or Reg Number
+                ...rawDataObject[key]          // Spreads name, hasPaid, hasCollected fields
+            });
+        });
+    }
+
+    // Pass the perfectly structured array to your rendering engines
+    renderPaymentsUI(cleanStudentsArray);
 });
 
 function renderPaymentsUI(paymentsData) {
@@ -60,4 +75,26 @@ function toggleCloudPayment(studentReg, newStatus) {
 function toggleCloudCollection(studentReg, newStatus) {
     if (checkClearanceLevel() !== 'WRITE_ACCESS') return;
     database.ref(`management/payments/${studentReg}/hasCollected`).set(newStatus);
+}
+
+
+function updateFinancialCounters(studentsList) {
+    let totalPaid = 0;
+    let totalCollected = 0;
+    const totalStudents = studentsList.length;
+
+    // Loop through the data to compute the telemetry
+    studentsList.forEach(student => {
+        if (student.hasPaid) totalPaid++;
+        if (student.hasCollected) totalCollected++;
+    });
+
+    // Update your UI counter DOM elements (Make sure these IDs match your HTML)
+    const paidElement = document.getElementById('t');
+    const collectedElement = document.getElementById('totalCollectedCount');
+
+    if (paidElement) paidElement.innerText = totalPaid;
+    if (collectedElement) collectedElement.innerText = totalCollected;
+    
+    console.log(`Telemetry Synced: ${totalPaid}/${totalStudents} paid.`);
 }
