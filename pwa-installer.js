@@ -3,9 +3,10 @@ let deferredPromptEvent;
 // 1. Automatically register the Service Worker for the browser layout
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js')
-        .then(() => console.log("PWA Service Worker Operational"))
-        .catch(err => console.error("Service Worker Registration Failed:", err));
+        .then(() => console.log("PWA Background Stream Operational"))
+        .catch(err => console.error("Service Worker Error Context:", err));
 }
+
 
 // 2. Intercept Chrome's installation challenge event globally
 window.addEventListener('beforeinstallprompt', (e) => {

@@ -15,13 +15,13 @@
         const loginTime = localStorage.getItem('cruise_login_time');
         
         const currentPath = window.location.pathname;
-        const onLoginPage = currentPath.endsWith('index.html') || currentPath.endsWith('/');
+        const onLoginPage = currentPath.endsWith('/index.html') || currentPath.endsWith('/');
 
         // Define the expiration lifespan: 3 Days = 3 * 24 * 60 * 60 * 1000 milliseconds
         const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
         if (!localToken || !localReg || !loginTime) {
-            if (!onLoginPage) window.location.href = 'index.html';
+            if (!onLoginPage) window.location.href = '/index.html';
         } else {
             // Check if token age exceeds 3 days
             const sessionAge = Date.now() - parseInt(loginTime);
@@ -51,7 +51,8 @@
    
 
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="/Images/cyb-cruise-group-logo.png " type="image/x-icon/png">
+    <link rel="icon" href="/Images/cyb-cruise-group-logo.png" type="image/x-icon/png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/Images/cyb-cruise-group-logo.png">
 
 </head>
 
@@ -112,4 +113,4 @@
   
 </body>
 
-</html
+</html>

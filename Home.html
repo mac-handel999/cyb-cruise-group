@@ -13,13 +13,13 @@
         const loginTime = localStorage.getItem('cruise_login_time');
         
         const currentPath = window.location.pathname;
-        const onLoginPage = currentPath.endsWith('index.html') || currentPath.endsWith('/');
+        const onLoginPage = currentPath.endsWith('/index.html') || currentPath.endsWith('/');
 
         // Define the expiration lifespan: 3 Days = 3 * 24 * 60 * 60 * 1000 milliseconds
         const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
         if (!localToken || !localReg || !loginTime) {
-            if (!onLoginPage) window.location.href = 'index.html';
+            if (!onLoginPage) window.location.href = '/index.html';
         } else {
             // Check if token age exceeds 3 days
             const sessionAge = Date.now() - parseInt(loginTime);
@@ -33,10 +33,10 @@
                     localStorage.removeItem('cruise_login_time');
                     
                     alert("SESSION EXPIRED: Security tokens must be rotated every 3 days. Please re-authenticate at the login terminal.");
-                    window.location.href = 'index.html';
+                    window.location.href = '/index.html';
                 }
             } else {
-                if (onLoginPage) window.location.href = 'Home.html';
+                if (onLoginPage) window.location.href = '/Home.html';
             }
         }
     })();
@@ -47,7 +47,8 @@
     
     <link rel="stylesheet" href="style.css">
 
-    <link rel="icon" href="Images/cyb-cruise-group-logo.png " type="image/x-icon/">
+    <link rel="apple-touch-icon" href="Images/cyb-cruise-group-logo.png">
+    <link rel="icon" href="Images/cyb-cruise-group-logo.png" type="image/png">
   
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
@@ -405,7 +406,7 @@
     </div>
     
     
-     <div class="features-list" data-aos="fade-left" data-aos-duration="3000">
+     <!-- <div class="features-list" data-aos="fade-left" data-aos-duration="3000">
         
         <a href=" #" style="text-decoration: none">
         <div class="app-header">
@@ -460,7 +461,7 @@
         </div>
         </a>
     </div>
-   
+    -->
 </div>
 
             </div> <br>
@@ -701,7 +702,7 @@ window.addEventListener('appinstalled', () => {
 
 <script src="main.js" type="text/JavaScript"></script>
 
-<!-- Link the shared installer script right before your closing </body> tag -->
+ 
 <script src="pwa-installer.js"></script>
 </body>
 </html>

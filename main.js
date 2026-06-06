@@ -147,10 +147,11 @@ function sanitizeInput(rawString) {
 /**
  * 4. ASYNC DATABASE INITIALIZATION
  */
+
 async function loadStudentData() {
     try {
         logSecurityEvent("Requesting secure class list matrix payload...");
-        const response = await fetch('class-list.enc'); // Or 'database.enc'
+        const response = await fetch('/class-list.enc'); // Or 'database.enc'
         
         if (!response.ok) {
             throw new Error(`HTTP handshake rejected. Status: ${response.status}`);
@@ -162,52 +163,17 @@ async function loadStudentData() {
         logSecurityEvent("Security Handshake complete. Dataset decrypted into buffer.");
     } catch (error) {
         logSecurityEvent(`CRITICAL: Database load failure.`, 'warn');
-        document.getElementById('results').innerHTML = `<p class="error">Class list data matrix decryption error.</p>`;
+        
+        // 🛡️ THE SAFETY GUARD FIX:
+        const resultsContainer = document.getElementById('results');
+        if (resultsContainer) {
+            resultsContainer.innerHTML = `<p class="error">Class list data matrix decryption error.</p>`;
+        } else {
+            // Quietly log it in the console without crashing the rest of your JS thread
+            console.warn("UI Status: Decryption failed, but 'results' container is not present on this viewport.");
+        }
     }
 }
-
-/**
- * 5. AUTHENTICATION GATEKEEPER
- * Prompts user for credentials and verifies identity against the database array.
- */
-function authenticateCourseRep() {
-    logSecurityEvent("Authentication required. Initializing identity challenge...");
-
-    const inputName = prompt("ENTER ADMIN AUTHORIZATION CHALLENGE:\n\nPlease enter your Full Name:");
-    if (!inputName) {
-        logSecurityEvent("Auth Cancelled: Null name string.", "warn");
-        return false;
-    }
-
-    const inputReg = prompt("ENTER ADMIN AUTHORIZATION CHALLENGE:\n\nPlease enter your Registration Number:");
-    if (!inputReg) {
-        logSecurityEvent("Auth Cancelled: Null registration vector.", "warn");
-        return false;
-    }
-
-    const sanitizedName = sanitizeInput(inputName.trim()).toLowerCase();
-    const sanitizedReg = sanitizeInput(inputReg.trim()).toLowerCase();
-
-    // Step A: Check if the registration number is in the explicitly authorized list
-    const isAuthorizedReg = AUTHORIZED_ADMIN_REGS.some(reg => reg.toLowerCase() === sanitizedReg);
-
-    // Step B: Verify the student actually exists in the database and the name matches
-    const verifiedStudent = studentDatabase.find(student => 
-        student.regNumber.toLowerCase() === sanitizedReg && 
-        student.name.toLowerCase().includes(sanitizedName)
-    );
-
-    if (isAuthorizedReg && verifiedStudent) {
-        logSecurityEvent(`ACCESS GRANTED: Session unlocked for Admin [${verifiedStudent.name}].`);
-        alert(`Access Granted. Welcome back, ${verifiedStudent.name}.`);
-        return true;
-    } else {
-        logSecurityEvent(`ACCESS DENIED: Unauthorized token attempt [Name: ${inputName} | Reg: ${inputReg}]`, "warn");
-        alert("ACCESS DENIED: Your credentials do not possess administrative clearance privileges.");
-        return false;
-    }
-}
-
 /**
  * 6. SEARCH QUERY ENGINE
  */

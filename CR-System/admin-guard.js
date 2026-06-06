@@ -1,7 +1,7 @@
 // // Hardcoded Admin Vector Configuration (Keep these secure)
 
 // Hardcoded Admin Vector Configuration (Base64 Reg Numbers)
-const ADMIN_REG_NUMBERS = [
+const AUTHORIZED_ADMINS = [
             btoa("20241470772"), // Replace with your actual Reg Number (Obfuscated)
             //fabian codes
         
@@ -23,65 +23,72 @@ const ADMIN_REG_NUMBERS = [
 
         
         
-function verifyAdminClearance() {
-    const activeUserReg = localStorage.getItem('cruise_user_reg'); // Base64 student token
-    const adminToken = localStorage.getItem('cruise_admin_token');
-    const scrambledAdminTime = localStorage.getItem('cruise_admin_time');
-    
-    const currentPath = window.location.pathname;
-    const onGatePage = currentPath.endsWith('admin-gate.html');
-    
-    // Constant Lifespan Configuration: 3 Days in Milliseconds
+// 2. DEFINE THE MISSING FUNCTION GLOBALLY
+function checkClearanceLevel() {
+    const userSessionReg = localStorage.getItem('cruise_user_reg'); // Level-1 gateway token
+    const adminSessionToken = localStorage.getItem('cruise_admin_token'); // 3-day token
+    const adminSessionTime = localStorage.getItem('cruise_admin_time');
     const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 
-    // 1. Roster Clearance Level Check: If not an approved user, kick back to student portal instantly
-    if (!ADMIN_REG_NUMBERS.includes(activeUserReg)) {
-        alert("CRITICAL WARNING: Unauthorized administration sector access routing detected.");
-        window.location.href = '/Home.html';
-        return false;
-    }
+    // Check condition A: Do they have an active, non-expired Admin session ticket?
+    if (adminSessionToken && adminSessionTime) {
+        try {
+            const loginTime = parseInt(atob(adminSessionTime));
+            const sessionAge = Date.now() - loginTime;
 
-    // 2. Token Integrity Check: If keys are missing, send to passphrase gate if not already there
-    if (!adminToken || !scrambledAdminTime) {
-        if (!onGatePage) {
-            window.location.href = 'admin-gate.html';
+            if (sessionAge < THREE_DAYS_MS) {
+                // Check condition B: Does their registration match the authorized CR list?
+                if (AUTHORIZED_ADMINS.includes(userSessionReg)) {
+                    return 'WRITE_ACCESS'; // Full admin CRUD control unlocked
+                }
+            }
+        } catch (error) {
+            console.error("Security Core: Session string corruption detected.", error);
         }
-        return false;
     }
 
-    try {
-        // 3. Expiration Math Engine: Unscramble and calculate age of the current admin session
-        const decodedAdminTime = parseInt(atob(scrambledAdminTime));
-        const sessionAge = Date.now() - decodedAdminTime;
+    // Fallback condition C: Are they logged in as a regular student?
+    if (userSessionReg) {
+        return 'READ_ONLY'; // Let them look at lists, hide inputs/delete keys
+    }
 
-        if (sessionAge > THREE_DAYS_MS) {
-            // Admin token lifecycle has ended. Evict session metrics.
-            localStorage.removeItem('cruise_admin_token');
-            localStorage.removeItem('cruise_admin_time');
+    // Default: Not logged in at all
+    return 'UNAUTHORIZED';
+}
+
+// 3. AUTOMATED INTERFACE PRUNING FOR STUDENTS
+function applyInterfaceClearance() {
+    const clearance = checkClearanceLevel();
+
+    if (clearance === 'UNAUTHORIZED') {
+        alert("🔒 SECURITY HANDSHAKE FAILED: Redirecting to Gateway...");
+        window.location.href = 'index.html';
+        return;
+    }
+
+    if (clearance === 'READ_ONLY') {
+        document.addEventListener("DOMContentLoaded", () => {
+            // Target any structural admin panels, input fields, or action buttons
+            const adminInputsAndButtons = document.querySelectorAll('.admin-only-control, input, button:not(#pwaInstallBtn), th.actions-col, td.actions-col');
             
-            alert("🔒 SECURITY PROTOCOL: Administrative session has expired after 3 days. Please re-authenticate.");
-            window.location.href = 'admin-gate.html';
-            return false;
-        }
+            adminInputsAndButtons.forEach(element => {
+                element.style.display = 'none';
+            });
 
-        // 4. Bypass Gate: If valid token exists and user is sitting on admin-gate.html, skip directly inside
-        if (onGatePage) {
-            window.location.href = 'admin-dashboard.html';
-        }
-        return true;
-
-    } catch (error) {
-        // Fallback catch: If someone tampers with the timestamp text format, trigger instant wipe
-        localStorage.removeItem('cruise_admin_token');
-        localStorage.removeItem('cruise_admin_time');
-        window.location.href = 'admin-gate.html';
-        return false;
+            // Inject a clean, professional status banner at the top of the viewport
+            if (!document.getElementById('readOnlyNotice')) {
+                const badge = document.createElement('div');
+                badge.id = "readOnlyNotice";
+                badge.innerHTML = "👁️ CLASS MANAGEMENT SYSTEM — LIVE SYSTEM VIEW (READ ONLY)";
+                badge.style = "background: rgba(0, 212, 255, 0.08); color: #00d4ff; border: 1px solid rgba(0, 212, 255, 0.3); padding: 10px; text-align: center; font-size: 0.8rem; font-family: monospace; letter-spacing: 1px; font-weight: bold; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 0 10px rgba(0,212,255,0.1);";
+                document.body.insertBefore(badge, document.body.firstChild);
+            }
+        });
     }
 }
 
-// Fire the authorization sequence immediately
-verifyAdminClearance();
-
+// Execute interface shielding checking immediately upon page initialization
+applyInterfaceClearance();
 
 
 
@@ -109,23 +116,23 @@ verifyAdminClearance();
 // // Example: If passphrase is "CYB_REPS_MATRIX_2026", hash it first.
 // const ADMIN_PASSPHRASE_HASH = " 6a24503fc9856b0a28d17f85b2b89a2d8465ed27a293c8a9b2967097117caa4d" ; // Placeholder hash
 
-function verifyAdminClearance() {
-   const activeUserReg = localStorage.getItem('cruise_user_reg'); // Already Base64 from login
-    const adminSessionActive = sessionStorage.getItem('admin_session_validated');
+// function verifyAdminClearance() {
+//    const activeUserReg = localStorage.getItem('cruise_user_reg'); // Already Base64 from login
+//     const adminSessionActive = sessionStorage.getItem('admin_session_validated');
 
-//     // 1. Check if the logged-in user is on the approved admin roster list
-//     if (!ADMIN_REG_NUMBERS.includes(activeUserReg)) {
-//         alert("CRITICAL WARNING: Unauthorized route access detected. Incident logged.");
-//         window.location.href = '/Home.html';
-//         return false;
-//     }
+// //     // 1. Check if the logged-in user is on the approved admin roster list
+// //     if (!ADMIN_REG_NUMBERS.includes(activeUserReg)) {
+// //         alert("CRITICAL WARNING: Unauthorized route access detected. Incident logged.");
+// //         window.location.href = '/Home.html';
+// //         return false;
+// //     }
 
-    // 2. If they are an admin but haven't solved the passphrase challenge this session, boot them to the challenge form
-   if (!adminSessionActive && !window.location.pathname.endsWith('admin-gate.html')) {
-       window.location.href = 'admin-gate.html';
-      return false;
-      }
-     return true;
- }
+//     // 2. If they are an admin but haven't solved the passphrase challenge this session, boot them to the challenge form
+//    if (!adminSessionActive && !window.location.pathname.endsWith('admin-gate.html')) {
+//        window.location.href = 'admin-gate.html';
+//       return false;
+//       }
+//      return true;
+//  }
  
-verifyAdminClearance();
+// verifyAdminClearance();

@@ -13,6 +13,13 @@
     if (!localStorage.getItem('cruise_admin_token') || !localStorage.getItem('cruise_admin_time')) {
         window.location.href = 'admin-gate.html';
     }
+
+    // <!-- Dynamic Environment Variable Bridge -->
+
+        window.env = {
+            FIREBASE_API_KEY: "<!-- VERCEL_INJECT_KEY -->",
+            FIREBASE_DATABASE_URL: "<!-- VERCEL_INJECT_URL -->"
+        };
 </script>
 
 
@@ -37,15 +44,15 @@
                 <a href="admin-dashboard.html" style="color:#00d4ff; text-decoration:none;"><i class="fa fa-arrow-left"></i> BACK TO DASHBOARD</a>
                 <h2 style="margin:5px 0 0 0;">📡 ROLL-CALL ATTENDANCE TERMINAL</h2>
             </div>
-            <button class="btn-action" onclick="clearSectionRecords('attendance')" style="background:#4a0e17; margin-left:auto; color: #fff; padding: 7px; border-radius:10px ;">WIPE SECTION</button>
+            <button class="btn-action admin-only-control" onclick="clearSectionRecords('attendance')" style="background:#4a0e17; margin-left:auto; color: #fff; padding: 7px; border-radius:10px ;">WIPE SECTION</button>
         </header>
 
         <!-- Dynamic Form To Add New Lecture Roll-Call Group Category Task -->
-        <div class="control-panel no-print" style="padding:10px; margin:10px;">
+        <div class="control-panel no-print admin-only-control" style="padding:10px; margin:10px;">
             <h4 style="margin:0; color:#00d4ff;"><i class="fa fa-plus-circle"></i> INITIALIZE NEW LECTURE ATTENDANCE SHEET</h4>
             <div class="input-row">
                 <input type="text" id="lectureTitle" class="input-box" placeholder="e.g., IFT 204 Class Attendance">
-                <button class="btn-action" onclick="createNewTaskRecord('attendance', 'lectureTitle')" style="color:#000; padding:7px; border-radius:10px;">CREATE TASK</button>
+                <button class="btn-action admin-only-control" onclick="createNewTaskRecord('attendance', 'lectureTitle')" style="color:#000; padding:7px; border-radius:10px;">CREATE TASK</button>
             </div>
         </div>
 
@@ -77,13 +84,37 @@
 
 
 
+
+
+
+<!-- 1. Firebase Core Connection Layer -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+
+<!-- 2. Firebase Realtime Database Engine Layer -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+
+<!-- 3. Your Custom Configuration Initialization Script Link -->
+<script src="/realtime-core.js"></script>
+
+<!-- 4. Your Global PWA Interaction Layer Link -->
+<script src="/pwa-installer.js"></script>
+
+
 <script src="/main.js"></script>
 
+<script src="admin-guard.js"></script>
+
+<script src="attendance.js"></script>
 
 
-    <!-- SCRIPT INFRASTRUCTURE LINKS -->
-    <script src="admin-core.js"></script>
-    <script >
+
+<!-- SCRIPT INFRASTRUCTURE LINKS -->
+<script src="admin-core.js"></script>
+
+
+
+
+    <script type="text/javascript">
       
       //for attendance page logic
 

@@ -11,6 +11,16 @@
     if (!localStorage.getItem('cruise_admin_token') || !localStorage.getItem('cruise_admin_time')) {
         window.location.href = 'admin-gate.html';
     }
+
+
+
+    // <!-- Dynamic Environment Variable Bridge -->
+       
+            window.env = {
+                FIREBASE_API_KEY: "<!-- VERCEL_INJECT_KEY -->",
+            FIREBASE_DATABASE_URL: "<!-- VERCEL_INJECT_URL -->"
+        };
+    
 </script>
 
 
@@ -34,14 +44,14 @@
                 <a href="admin-dashboard.html" style="color:#00d4ff; text-decoration:none;"><i class="fa fa-arrow-left"></i> BACK TO CORE</a>
                 <h2 style="margin:5px 0 0 0;">📦 ASSIGNMENT & LAB MANUAL SUBMISSIONS MATRIX</h2>
             </div>
-            <button class="btn-action" onclick="clearSectionRecords('submissions')" style="background:#4a0e17; margin-left:auto;">RESET DATA</button>
+            <button class="btn-action admin-only-control" onclick="clearSectionRecords('submissions')" style="background:#4a0e17; margin-left:auto;">RESET DATA</button>
         </header>
 
-        <div class="control-panel no-print">
+        <div class="control-panel no-print admin-only-control" >
             <h4 style="margin:0; color:#00d4ff;"><i class="fa fa-folder-open"></i> REGISTER NEW ASSIGNMENT TRACKING SLOT</h4>
             <div class="input-row">
                 <input type="text" id="subTitle" class="input-box" placeholder="e.g., Cos 202 Assignment or Manual Submission">
-                <button class="btn-action" onclick="createNewTaskRecord('submissions', 'subTitle')">DEPLOY TARGET</button>
+                <button class="btn-action admin-only-control" onclick="createNewTaskRecord('submissions', 'subTitle')">DEPLOY TARGET</button>
             </div>
         </div>
 
@@ -73,9 +83,31 @@
 
 
 
-<script src="/main.js"></script>
+
+
+    <!-- 1. Firebase Core Connection Layer -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    
+    <!-- 2. Firebase Realtime Database Engine Layer -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    
+    <!-- 3. Your Custom Configuration Initialization Script Link -->
+    <script src="/realtime-core.js"></script>
+    
+    <!-- 4. Your Global PWA Interaction Layer Link -->
+    <script src="/pwa-installer.js"></script>
+    
+    <!-- 5. Your Main Module Execution Logic File Link (e.g., attendance.js) -->
+    
+    <script src="/main.js"></script>
+
+    <script src="admin-guard.js"></script>
+
     <script src="admin-core.js"></script>
-   
+
+
+    <script src="submissions.js"></script>
+
    <script type="text/javascript" charset="utf-8">
                //for submission page logic
         
