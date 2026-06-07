@@ -1,100 +1,152 @@
-// 1. Establish Real-Time Stream from the Payments Database Node
-// Locate your live database reference listener in payments.js
-database.ref('management/payments').on('value', (snapshot) => {
-    const rawDataObject = snapshot.val();
-    const cleanStudentsArray = [];
-
-    // Safety Guard: Check if the database path has records
-    if (rawDataObject) {
-        // Convert the Firebase object keys/values into a structured array
-        Object.keys(rawDataObject).forEach((key) => {
-            cleanStudentsArray.push({
-                id: key,                       // The database key or Reg Number
-                ...rawDataObject[key]          // Spreads name, hasPaid, hasCollected fields
-            });
-        });
-    }
-
-    // Pass the perfectly structured array to your rendering engines
-    renderPaymentsUI(cleanStudentsArray);
-});
-
-function renderPaymentsUI(paymentsData) {
-    const clearance = checkClearanceLevel();
-    const ledgerBody = document.getElementById('paymentsContainer');
-    ledgerBody.innerHTML = "";
-
-    let totalPaid = 0;
-    let totalCollected = 0;
-    let index = 1;
-
-    for (let reg in paymentsData) {
-        const record = paymentsData[reg];
-        if (record.hasPaid) totalPaid++;
-        if (record.hasCollected) totalCollected++;
-
-        let adminActions = '';
-        if (clearance === 'WRITE_ACCESS') {
-            adminActions = `
-                <td class="admin-only-control">
-                    <button onclick="toggleCloudPayment('${reg}', ${!record.hasPaid})" style="background: ${record.hasPaid ? '#800020' : '#1e293b'}; color: #fff; padding: 4px 8px; border: 1px solid #00d4ff; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">
-                        ${record.hasPaid ? 'Undo Pay' : 'Mark Paid'}
-                    </button>
-                    <button onclick="toggleCloudCollection('${reg}', ${!record.hasCollected})" style="background: ${record.hasCollected ? '#00d4ff' : '#1e293b'}; color: ${record.hasCollected ? '#000' : '#fff'}; padding: 4px 8px; border: 1px solid #00d4ff; border-radius: 4px; cursor: pointer; font-size: 0.75rem; margin-left: 5px;">
-                        ${record.hasCollected ? 'Undo Collect' : 'Mark Collected'}
-                    </button>
-                </td>`;
-        }
-
-        ledgerBody.innerHTML += `
-            <tr style="${reg === currentStudentReg ? 'background: rgba(128, 0, 32, 0.15); border-left: 3px solid #800020;' : ''}">
-                <td>${index++}</td>
-                <td>${record.name}</td>
-                <td>${reg}</td>
-                <td style="font-weight: bold; color: ${record.hasPaid ? '#22c55e' : '#ef4444'};">
-                    ${record.hasPaid ? '✅ PAID' : '❌ UNPAID'}
-                </td>
-                <td style="font-weight: bold; color: ${record.hasCollected ? '#00d4ff' : '#e2e8f0'};">
-                    ${record.hasCollected ? '📦 DELIVERED' : '⏳ PENDING'}
-                </td>
-                ${clearance === 'WRITE_ACCESS' ? adminActions : ''}
-            </tr>
-        `;
-    }
-
-    // Refresh layout finance metrics instantly across all active displays
-    updateFinancialCounters(totalPaid, totalCollected);
-}
-
-// Specialized Dual-Action Admin Toggles
-function toggleCloudPayment(studentReg, newStatus) {
-    if (checkClearanceLevel() !== 'WRITE_ACCESS') return;
-    database.ref(`management/payments/${studentReg}/hasPaid`).set(newStatus);
-}
-
-function toggleCloudCollection(studentReg, newStatus) {
-    if (checkClearanceLevel() !== 'WRITE_ACCESS') return;
-    database.ref(`management/payments/${studentReg}/hasCollected`).set(newStatus);
-}
+/**
+ * CYB CRUISE GROUP — REAL-TIME PAYMENTS LOGISTICS ENGINE
+ */
+ 
+ 
+ window.updateFinancialCounters = function(data) {
+    console.log("Financial update triggered:", data);
+    // Add your math logic here to count total paid/unpaid
+};
 
 
-function updateFinancialCounters(studentsList) {
-    let totalPaid = 0;
-    let totalCollected = 0;
-    const totalStudents = studentsList.length;
+let masterRoster = [];
 
-    // Loop through the data to compute the telemetry
-    studentsList.forEach(student => {
-        if (student.hasPaid) totalPaid++;
-        if (student.hasCollected) totalCollected++;
-    });
-
-    // Update your UI counter DOM elements (Make sure these IDs match your HTML)
-    const paidElement = document.getElementById('t');
-    const collectedElement = document.getElementById('totalCollectedCount');
-
-    if (paidElement) paidElement.innerText = totalPaid;
-    if (collectedElement) collectedElement.innerText = totalCollected;
+async function initPaymentsSystem() {
+    try {
     
-    console.log(`Telemetry Synced: ${totalPaid}/${totalStudents} paid.`);
+    const response = await fetch('/class-list.enc');
+        const encryptedData = await response.text();
+        masterRoster = JSON.parse(atob(encryptedData.trim()));
+        
+        // Listen to cloud stream
+        database.ref('management/payments').on('value', (snapshot) => {
+            renderPaymentsLayout(snapshot.val());
+        });
+        setupPaymentListeners();
+    } catch (e) {
+        console.error("Initialization fault:", e);
+    }
 }
+
+function renderPaymentsLayout(liveData) {
+    const container = document.getElementById('paymentsContainer');
+    if (!container) return;
+    container.innerHTML = "";
+
+    if (!liveData) {
+        container.innerHTML = `<div class='metric-card'>[!] NO ACTIVE HANDOUT ACCOUNTABILITY SLOTS REGISTERED</div>`;
+        return;
+    }
+
+    const tasks = Object.keys(liveData).map(k => ({id: k, ...liveData[k]}));
+
+    tasks.forEach(task => {
+        const paidArr = task.paidStudents ? Object.values(task.paidStudents) : [];
+        const collArr = task.collectedStudents ? Object.values(task.collectedStudents) : [];
+        
+        const block = document.createElement('div');
+        block.className = 'task-block';
+        block.innerHTML = `
+            <div class="task-header">
+                <div><strong style="font-size:1.1rem; color:#fff;">${task.title.toUpperCase()}</strong></div>
+                <div class="no-print"><button class="btn-action" style="background:#118ab2;" onclick="copyWhatsAppPayment('${task.title}', ${JSON.stringify(paidArr)})">COPY WHATSAPP</button></div>
+            </div>
+            <div class="metrics-bar" style="padding:12px; background:#050b14;">
+                <div class="metric-card">💰 PAID: ${paidArr.length}</div>
+                <div class="metric-card">📦 COLLECTED: ${collArr.length}</div>
+            </div>
+            <div class="no-print" style="padding:15px;">
+                <input type="text" class="input-box" placeholder="Search to log..." oninput="filterPaymentSearch(this, '${task.id}')">
+                <div id="searchBin_${task.id}"></div>
+            </div>
+            <div id="list_${task.id}">${renderRows(task, paidArr, collArr)}</div>
+        `;
+        container.appendChild(block);
+    });
+}
+
+function renderRows(task, paidArr, collArr) {
+    const allRegs = Array.from(new Set([...paidArr.map(s=>s.reg), ...collArr.map(s=>s.reg)]));
+    return allRegs.map(reg => {
+        const match = masterRoster.find(s => s.regNumber === reg);
+        const isPaid = paidArr.some(s => s.reg === reg);
+        const isColl = collArr.some(s => s.reg === reg);
+        return `
+            <div class="student-row">
+                <span>💳 ${match?.name || "UNKNOWN"} (${reg})</span>
+                <button onclick="togglePay('${task.id}', '${reg}', 'paidStudents', ${!isPaid})" style="background:${isPaid?'#06d6a0':'#4a0e17'}"> ${isPaid?'PAID':'UNPAID'}</button>
+                <button onclick="togglePay('${task.id}', '${reg}', 'collectedStudents', ${!isColl})" style="background:${isColl?'#00d4ff':'#ffb703'}">${isColl?'COLLECTED':'PENDING'}</button>
+            </div>
+        `;
+    }).join('');
+}
+
+// Cloud Update Functions
+function togglePay(taskId, reg, path, status) {
+    if (status) {
+        database.ref(`management/payments/${taskId}/${path}/${reg}`).set({reg: reg});
+    } else {
+        database.ref(`management/payments/${taskId}/${path}/${reg}`).remove();
+    }
+}
+
+function setupPaymentListeners() {
+    document.getElementById('deployMaterialBtn').onclick = () => {
+        const title = document.getElementById('payTitle').value;
+        database.ref('management/payments').push({ title, createdAt: Date.now() });
+    };
+    document.getElementById('wipeLedgerBtn').onclick = () => database.ref('management/payments').remove();
+}
+
+document.addEventListener('DOMContentLoaded', initPaymentsSystem);
+
+
+
+/**
+ * Real-time Search Filter for Payment Ledger
+ * Queries the master roster and pushes selections to the Cloud Matrix
+ */
+function filterPaymentSearch(inputEl, taskId) {
+    const query = inputEl.value.trim().toLowerCase();
+    const bin = document.getElementById(`searchBin_${taskId}`);
+    if (!bin) return;
+    
+    bin.innerHTML = "";
+    if (query.length < 2) return;
+
+    // Filter master roster for matches
+    const matches = masterRoster.filter(s => 
+        s.name.toLowerCase().includes(query) || 
+        s.regNumber.includes(query)
+    ).slice(0, 5);
+
+    matches.forEach(student => {
+        const row = document.createElement('div');
+        row.className = 'student-row';
+        row.style.background = '#050b14';
+        row.style.display = 'flex';
+        row.style.justifyContent = 'space-between';
+        row.style.padding = '10px';
+        row.innerHTML = `
+            <span>${student.name.toUpperCase()} (${student.regNumber})</span>
+            <button class="btn-action" style="padding:5px 10px; font-size:0.8rem; background:#06d6a0; cursor:pointer;" 
+            onclick="addPaymentEntry('${taskId}', '${student.regNumber}')">LOG ENTRY</button>
+        `;
+        bin.appendChild(row);
+    });
+}
+
+/**
+ * Helper to push the searched student into the Firebase ledger
+ */
+function addPaymentEntry(taskId, regNum) {
+    // Automatically sets them to UNPAID/PENDING when first added
+    database.ref(`management/payments/${taskId}/paidStudents/${regNum}`).set({ reg: regNum });
+    
+    // Clear the bin
+    const bin = document.querySelector(`[id^="searchBin_"]`);
+    if (bin) bin.innerHTML = "";
+    
+    console.log(`System: ${regNum} injected into ledger.`);
+}
+

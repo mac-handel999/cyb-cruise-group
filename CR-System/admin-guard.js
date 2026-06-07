@@ -1,4 +1,33 @@
-// // Hardcoded Admin Vector Configuration (Keep these secure)
+// Add this at the very top of admin-guard.js
+window.AUTHORIZED_ADMINS = ["FABIAN", "KENETH", "PRAISEGOD" ]; // Replace with your actual admin usernames/IDs
+
+
+
+
+// /admin-guard.js
+
+// 1. Full Admin CRUD
+window.isUserAdmin = function() {
+    return localStorage.getItem('cruise_admin_token') !== null;
+};
+
+// 2. Student Self-Service (Restricted Access)
+window.canPerformSelfAction = function() {
+    // Returns true if the user is a student (has a reg number)
+    return localStorage.getItem('cruise_user_reg') !== null;
+};
+
+
+// This function runs on every page load to hide/remove admin UI
+window.applyInterfaceClearance = function() {
+    const adminTools = document.querySelectorAll('.admin-only-control');
+    if (!window.isUserAdmin()) {
+        adminTools.forEach(el => el.style.display = 'none');
+    } else {
+        adminTools.forEach(el => el.style.display = ''); // Restore for admins
+    }
+};
+
 
 // Hardcoded Admin Vector Configuration (Base64 Reg Numbers)
 const AUTHORIZED_ADMINS = [
@@ -11,11 +40,11 @@ const AUTHORIZED_ADMINS = [
             btoa("20241439172"), // Replace with the CR's actual Reg Number (Obfuscated)
             //PraiseGod assistant CR 2
         
-            btoa("20241434552"),  // Replace with the CR's actual Reg Number (Obfuscated)
-            //VFM assistant CR 1
+            // btoa("20241434552"),  // Replace with the CR's actual Reg Number (Obfuscated)
+            // //VFM assistant CR 1
         
-            btoa("20241440712")  // Replace with the CR's actual Reg Number (Obfuscated)
-            //Mac-clinton exchange
+            // btoa("20241440712")  // Replace with the CR's actual Reg Number (Obfuscated)
+            // //Mac-clinton exchange
         ];
         
         
@@ -55,6 +84,14 @@ function checkClearanceLevel() {
     // Default: Not logged in at all
     return 'UNAUTHORIZED';
 }
+
+// /admin-guard.js (ensure this is included in your pages)
+window.checkClearanceLevel = function() {
+    const adminToken = localStorage.getItem('cruise_admin_token');
+    // Basic logic: if token exists, they have write access
+    return adminToken ? 'WRITE_ACCESS' : 'READ_ONLY';
+};
+
 
 // 3. AUTOMATED INTERFACE PRUNING FOR STUDENTS
 function applyInterfaceClearance() {

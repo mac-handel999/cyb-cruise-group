@@ -5,41 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>class updates</title>
    
-<script>
-    (function enforceAccessControl() {
-        const localToken = localStorage.getItem('cruise_session_token');
-        const localReg = localStorage.getItem('cruise_user_reg');
-        const scrambledTime = localStorage.getItem('cruise_login_time');
-        
-        const currentPath = window.location.pathname;
-        const onLoginPage = currentPath.endsWith('index.html') || currentPath.endsWith('/');
-        const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
-
-        if (!localToken || !localReg || !scrambledTime) {
-            if (!onLoginPage) window.location.href = 'index.html';
-        } else {
-            try {
-                // Unscramble the timestamp to read the raw time integer values
-                const decodedTime = atob(scrambledTime);
-                const sessionAge = Date.now() - parseInt(decodedTime);
-                
-                if (sessionAge > THREE_DAYS_MS) {
-                    if (!onLoginPage) {
-                        localStorage.clear();
-                        alert("SESSION EXPIRED: Security tokens must be rotated every 3 days. Please re-authenticate.");
-                        window.location.href = 'index.html';
-                    }
-                } else {
-                    if (onLoginPage) window.location.href = 'Home.html';
-                }
-            } catch (e) {
-                // If someone manually tampers with the scrambled string, it breaks atob, triggering an instant boot out
-                localStorage.clear();
-                window.location.href = 'index.html';
-            }
+ <script>
+        if (!localStorage.getItem('cruise_admin_token') || !localStorage.getItem('cruise_admin_time')) {
+            window.location.href = 'admin-gate.html';
         }
-    })();
-</script>
+        window.env = {
+            FIREBASE_API_KEY: "",
+            FIREBASE_DATABASE_URL: ""
+        };
+    </script>
 
 
 
@@ -70,29 +44,10 @@
             <li><a href="Home.html">Home</a></li>
             <li><a href="class-updates.html" class="active">Class Updates</a></li>
         </ul>
-    </nav>  <br>
-    
-      <div style="text-align: center; margin-bottom: 30px;">
-            <h2 id="features-text">📢 Class Updates Terminal</h2>
-            <p style="color: #cbd5e1; margin-top: 10px; font-family: monospace;">CR-AUTHORIZATION FEED MATRIX</p>
-        </div>
-
-    
-    <div class="features-container" style="margin-top: 40px;">
-      
-        <div id="updatesFeed" class="updates-grid">
-            <div class="loading-state" style="color: #00d4ff; font-family: monospace; text-align: center; width: 100%;">
-                Initializing secure feed handshake...
-            </div>
-        </div>
-    </div>
-
-
-
-
-  <div class="footer">
-      
-      <div style="margin-top: 50px; padding: 20px; text-align: center; border-top: 1px solid #1c2541; font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">
+        <br />
+        
+        
+        <div style="margin-top: 50px; padding: 20px; text-align: center; border-top: 1px solid #1c2541; font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">
  
     <div id="identityBadge" style="color: #00d4ff; margin-top: 5px;">
         <i class="fa fa-shield"></i> SECURE MATRIX NODE ACTIVE
@@ -105,41 +60,48 @@
     
             Created by {FABIAN CODES HQ} for CYB CLASS OF 2024/2025 (SET). <br>
         </small>
+    </nav>  <br>
+    
+      <div style="text-align: center; margin-bottom: 30px;">
+            <h2 id="features-text">📢 Class Updates Terminal</h2>
+            <p style="color: #cbd5e1; margin-top: 10px; font-family: monospace;">CR-AUTHORIZATION FEED MATRIX</p>
+        </div>
+
+    
+  <div id="updatesFeed" style="height: 60vh; overflow-y: auto; margin: 20px; padding-bottom: 20px;">
+    <div class="loading-state" style="color: #00d4ff; font-family: monospace; text-align: center;">
+        Initializing secure feed handshake...
     </div>
+</div>
 
-    <script src="main.js"></script>
-    
-    
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
-    <script src="class-updates.js" type="text/javascript" charset="utf-8"></script>
-    
-  <script>
-    AOS.init();
-</script>
-
+<div class="control-panel no-print admin-only-control" style="position: fixed; bottom: 0; left: 0; width: 100%; background: #050b14; border-top: 1px solid #00d4ff; padding: 15px; box-sizing: border-box; z-index: 100;">
+    <div style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px;">
+        <input type="text" id="updateTitle" class="input-box" placeholder="HEADING (CAPS BOLD)" style="text-transform: uppercase; padding: 8px;">
+        <textarea id="updateBody" class="input-box" placeholder="Full message body..." style="padding: 8px; background-color: #050b14; color: #fff;"></textarea>
+        <input type="text" id="updateLink" class="input-box" placeholder="Action Link URL (Optional)" style="padding: 8px;">
+        <button class="btn-action" id="deployUpdateBtn" style="background:#06d6a0; color:#000; padding:10px; border-radius:5px; border:none; cursor:pointer;">DEPLOY BROADCAST</button>
+    </div>
+</div>
 
 
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', function (e) {
-                e.preventDefault(); // Stop the default link transition
-
-                // Scrub credentials out of local storage matrix
-                localStorage.removeItem('cruise_session_token');
-                localStorage.removeItem('cruise_user_reg');
-                
-                alert('You Have Successfully Logged Out!!! ');
+<!-- Firebase Layers -->
+ <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
 
-                // Redirect back to login terminal screen
-                window.location.href = 'index.html';
-            });
-        }
-    });
-</script>
+
+<script src="/realtime-core.js" defer></script> 
+
+ <script src="/CR-System/admin-guard.js" defer></script> 
+ 
+ <script src="/main.js" type="text/JavaScript"></script>
+
+ 
+<script src="/pwa-installer.js"></script>
+
+<script src="class-updates.js" defer></script>
+
+
 </body>
 </html>
