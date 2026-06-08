@@ -6,7 +6,30 @@ window.deleteTask = (taskId) => {
         return;
     }
     if (confirm("Delete this submission category permanently?")) {
-        database.ref(`management/submissions/${taskId}`).remove();
+      // OLD: database.ref(`management/updates/${key}`).remove();
+
+// NEW:
+async function deleteUpdate(key) {
+    if (!confirm("Delete this broadcast?")) return;
+
+    try {
+        const response = await fetch(`/api/admin/updates/${key}`, {
+            method: 'DELETE', // Using DELETE method for removals
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-admin-token': localStorage.getItem('x-admin-token') // This is the secret key
+            }
+        });
+
+        if (response.ok) {
+            alert("Broadcast deleted successfully.");
+        } else {
+            alert("Access denied or server error.");
+        }
+    } catch (err) {
+        console.error("Transmission error:", err);
+    }
+}
     }
 };
 

@@ -30,9 +30,7 @@ async function initSubmissionsSystem() {
 }
 
 function listenToLiveSubmissions() {
-    database.ref('management/submissions').on('value', (snapshot) => {
-        renderSubmissionsLayout(snapshot.val());
-    });
+   const data = await fetchManagedData('nodeName')
 }
 
 function renderSubmissionsLayout(liveData) {

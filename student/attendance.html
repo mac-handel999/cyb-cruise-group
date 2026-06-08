@@ -12,10 +12,7 @@
         if (!localStorage.getItem('cruise_admin_token') || !localStorage.getItem('cruise_admin_time')) {
             window.location.href = 'admin-gate.html';
         }
-        window.env = {
-            FIREBASE_API_KEY: "",
-            FIREBASE_DATABASE_URL: ""
-        };
+        
     </script>
 </head>
 <body>
@@ -33,7 +30,7 @@
     <div class="sub-container" style="padding:10px; margin:10px;">
         <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;" class="no-print">
             <div>
-                <a href="admin-dashboard.html" style="color:#00d4ff; text-decoration:none;"><i class="fa fa-arrow-left"></i> BACK TO DASHBOARD</a>
+                <a href="/student-dashboard.html" style="color:#00d4ff; text-decoration:none;"><i class="fa fa-arrow-left"></i> BACK TO DASHBOARD</a>
                 <h2 style="margin:5px 0 0 0;">📡 ROLL-CALL ATTENDANCE TERMINAL</h2>
             </div>
            
@@ -70,8 +67,8 @@
 
     <script src="/pwa-installer.js"></script>
     <script src="/main.js"></script>
-    <script src="admin-core.js"></script>
-
+    <!-- <script src="/admin-core.js"></script> -->
+    <script src="/api-service.js"></script>
     <script src="attendance.js"></script>
 </body>
 </html>

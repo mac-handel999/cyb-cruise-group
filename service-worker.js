@@ -3,9 +3,9 @@ const CACHE_NAME = 'cyb-cruise-group-v1';
 const ASSETS_TO_CACHE = [
   '/',
    '/index.html',
-    '/Home.html',
+    '/landing-home.html',
     '/CR-System/admin-gate.html',
-    '/CR-System/admin-dashboard.html',
+    '/class-management.html',
     '/style.css',
     '/pwa-installer.js'
 ];

@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYB CRUISE | CR Management Matrix</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="class-management.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- <script>
+        (function verifyAdminAccess() {
+            const adminToken = localStorage.getItem('cruise_admin_token');
+            const adminTime = localStorage.getItem('cruise_admin_time');
+
+            // If the 3-day localStorage keys are missing, deny entry and boot to gate
+            if (!adminToken || !adminTime) {
+                alert("ACCESS DENIED: Administrative token missing. Please authenticate.");
+                window.location.href = 'admin-gate.html';
+            }
+        })();
+    </script> -->
+
+
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="/Images/cyb-cruise-group-logo-1.png.png" alt="CRUISE GROUP Logo" class="nav-logo" width="250"
+                height="250">
+
+        </div>
+        <ul class="nav-links">
+            <li><a href="/Home.html">Home</a></li>
+            <li><a href="class-management.html" class="active">CLASS MANAGEMENT SYSTEM</a></li>
+        </ul>
+    </nav> <br>
+
+   <div class="class-management">
+    <a href="/student/student-dashboard.html">
+        <div class="student">
+        <figure>
+            <img src="icons-logos/profile-pic.png" alt=" icons-image" width="80px" height="80px" class="app-icons">
+        </figure><br>
+            STUDENTS DASHBOARD
+        </div>
+        </a>
+
+        <a href="/CR-System/admin-dashboard.html">
+        <div class="admin">
+
+            <figure>
+                <img src="icons-logos/profile-pic.png" alt=" icons-image" width="80px" height="80px" class="app-icons">
+            </figure><br>
+            COURSE-REPS DASHBOARD
+        </div>
+        </a>
+    </div>
+
+    <div class="footer">
+
+        <div
+            style="margin-top: 50px; padding: 20px; text-align: center; border-top: 1px solid #1c2541; font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">
+
+            <div id="identityBadge" style="color: #00d4ff; margin-top: 5px;">
+                <i class="fa fa-shield"></i> SECURE MATRIX NODE ACTIVE
+            </div>
+        </div>
+
+        <li><a href="#" id="logoutBtn" style="color: #ff3333;"><i class="fa fa-power-off"></i> LOGOUT</a></li>
+        <small>
+            &copy; 2026 CYB CRUISE GROUP || All rights reserved || <br>
+
+            Created by {FABIAN CODES HQ} for CYB CLASS OF 2024/2025 (SET). <br>
+        </small>
+    </div>
+
+
+
+
+
+    <script src="/main.js"></script>
+
+
+
+    <script src="admin-core.js"></script>
+
+
+
+    <script src="admin-dashboard.js"></script>
+</body>
+
+</html>

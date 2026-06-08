@@ -12,10 +12,7 @@
         if (!localStorage.getItem('cruise_admin_token') || !localStorage.getItem('cruise_admin_time')) {
             window.location.href = 'admin-gate.html';
         }
-        window.env = {
-            FIREBASE_API_KEY: "<!-- VERCEL_INJECT_KEY -->",
-            FIREBASE_DATABASE_URL: "<!-- VERCEL_INJECT_URL -->"
-        };
+        
     </script>
 </head>
 <body>
@@ -33,7 +30,7 @@
     <div class="sub-container">
         <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px;" class="no-print">
             <div>
-                <a href="admin-dashboard.html" style="color:#00d4ff; text-decoration:none;"><i class="fa fa-arrow-left"></i> BACK TO DASHBOARD</a>
+                <a href="/student-dashboard.html" style="color:#00d4ff; text-decoration:none;"><i class="fa fa-arrow-left"></i> BACK TO DASHBOARD</a>
                 <h2 style="margin:5px 0 0 0;">💵 MATERIALS LOGISTICS & TEXTBOOK PAYMENTS LAYER</h2>
             </div>
            
@@ -62,7 +59,9 @@
     <script src="admin-guard.js"></script>
     <script src="/pwa-installer.js"></script>
     <script src="/main.js"></script>
-    <script src="admin-core.js"></script>
+    <!-- <script src="admin-core.js"></script> -->
+
+        <script src="/api-service.js"></script>
     <script src="payments.js"></script>
 </body>
 </html>

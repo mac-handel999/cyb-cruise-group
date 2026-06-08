@@ -3,6 +3,29 @@
  * READ-ONLY & SELF-SUBMIT MODE
  */
 
+/**
+ * CYB CRUISE GROUP — STUDENT ATTENDANCE TERMINAL
+ * NOW SECURED VIA PROXY SERVER
+ */
+
+async function fetchAttendance() {
+    try {
+        const response = await fetch('/api/attendance');
+        const liveData = await response.json();
+        renderAttendanceLayout(liveData);
+    } catch (err) {
+        console.error("Attendance Sync Error:", err);
+    }
+}
+
+// Auto-refresh attendance every 10 seconds for a "live" feel
+document.addEventListener('DOMContentLoaded', () => {
+    fetchAttendance();
+    setInterval(fetchAttendance, 10000); 
+});
+
+
+
 let masterRoster = [];
 let currentStudentReg = "";
 let currentStudentName = "";
@@ -29,12 +52,17 @@ async function initAttendanceSystem() {
     }
 }
 
-function listenToLiveAttendance() {
-    // Fetches live data from Firebase for reading
-    database.ref('management/attendance').on('value', (snapshot) => {
-        renderAttendanceLayout(snapshot.val());
-    });
+// Replace listenToLiveAttendance with:
+async function updateAttendanceUI() {
+    try {
+        const liveData = await apiFetch('attendance');
+        renderAttendanceLayout(liveData);
+    } catch (e) {
+        console.error(e);
+    }
 }
+// Run this every 5 seconds to simulate 'real-time'
+setInterval(updateAttendanceUI, 5000);
 
 /**
  * Render Student UI (No Admin Controls)
@@ -86,12 +114,21 @@ function renderAttendanceLayout(liveData) {
 /**
  * Student-Only Action: Submit Attendance
  */
-function submitSelfAttendance(taskId) {
-    if (!currentStudentReg) return alert("Session Error.");
-    
-    database.ref(`management/attendance/${taskId}/students/${currentStudentReg}`).set({
-        regNumber: currentStudentReg,
-        name: currentStudentName,
-        timestamp: new Date().toLocaleTimeString()
+async function submitSelfAttendance(taskId) {
+    const response = await fetch('/api/submit-attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            taskId: taskId, 
+            reg: currentStudentReg, 
+            name: currentStudentName 
+        })
     });
+    
+    if (response.ok) {
+        alert("✅ Attendance Recorded");
+        fetchAttendance(); // Refresh view
+    } else {
+        alert("🔒 Submission Error");
+    }
 }

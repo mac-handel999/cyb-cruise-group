@@ -9,10 +9,7 @@
         if (!localStorage.getItem('cruise_admin_token') || !localStorage.getItem('cruise_admin_time')) {
             window.location.href = 'admin-gate.html';
         }
-        window.env = {
-            FIREBASE_API_KEY: "",
-            FIREBASE_DATABASE_URL: ""
-        };
+        
     </script>
 
 
@@ -41,7 +38,7 @@
            
         </div>
         <ul class="nav-links">
-            <li><a href="Home.html">Home</a></li>
+            <li><a href="/Home.html">Home</a></li>
             <li><a href="class-updates.html" class="active">Class Updates</a></li>
         </ul>
         <br />
@@ -49,7 +46,7 @@
         
         <div style="margin-top: 50px; padding: 20px; text-align: center; border-top: 1px solid #1c2541; font-family: monospace; color: #cbd5e1; font-size: 0.8rem;">
  
-    <div id="identityBadge" style="color: #00d4ff; margin-top: 5px;">
+    <div id="identityBadge" style="color: #00d4ff; margin-top: 5px;">   
         <i class="fa fa-shield"></i> SECURE MATRIX NODE ACTIVE
     </div>
 </div>
@@ -87,11 +84,11 @@
 
 <script src="/realtime-core.js" defer></script> 
 
- <script src="/CR-System/admin-guard.js" defer></script> 
+ <!-- <script src="/CR-System/admin-guard.js" defer></script>  -->
  
  <script src="/main.js" type="text/JavaScript"></script>
 
- 
+<script src="/api-service.js"></script>
 <script src="/pwa-installer.js"></script>
 
 <script src="class-updates.js" defer></script>

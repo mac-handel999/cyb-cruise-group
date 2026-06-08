@@ -1,0 +1,20 @@
+# --- Sensitive Configuration ---
+# DO NOT COMMIT THESE TO GITHUB
+service-account.json
+.env
+
+# --- Dependency Folders ---
+node_modules/
+dist/
+build/
+
+# --- System & IDE Files ---
+.DS_Store
+.vscode/
+.idea/
+
+# --- Logs & Temp ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

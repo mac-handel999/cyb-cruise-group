@@ -1,6 +1,6 @@
 {
   "short_name": "CYB Cruise Group",
-  "name": "CYB Cruise Class Management System",
+  "name": "CYB Class Management System",
   "icons": [
     {
       "src": " /Images/cyb-cruise-group-logo.png",
@@ -14,7 +14,7 @@
     }
   ],
   "start_url": "/index.html",
-  "start_url_2": "/Home.html",
+  "start_url_2": "/landing-home.html",
   "background_color": "#050b14",
   "theme_color": "#800020",
   "display": "standalone",

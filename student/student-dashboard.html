@@ -8,17 +8,8 @@
     <link rel="stylesheet" href="student-dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     
-//   <script>
-//   (function verifyAdminAccess() {
-//       const adminToken = localStorage.getItem('cruise_admin_token');
-//       const adminTime = localStorage.getItem('cruise_admin_time');
-       
-//       // If the 3-day localStorage keys are missing, deny entry and boot to gate
-//       if (!adminToken || !adminTime) {
-//           alert("ACCESS DENIED: Administrative token missing. Please authenticate.");
-//           window.location.href = 'CR-system/admin-gate.html';
-//       }
-//   })();
+   <script>
+//   
 //   </script>
 
 
@@ -33,15 +24,15 @@
         </div>
         <ul class="nav-links">
             <li><a href="/Home.html">Home</a></li>
-            <li><a href="/student/student-dashboard.html" class="active">Class Admin Dashboard</a></li>
+            <li><a href="/student/student-dashboard.html" class="active">Class Students Dashboard</a></li>
         </ul>
     </nav>  <br>
 
     <div class="admin-container">
         <header class="matrix-header">
             <div>
-                <h1 style="margin: 0; font-size: 1.8rem; color: #ffffff;">CR MANAGEMENT CORE</h1>
-                <small style="color: #00d4ff;"><i class="fa fa-shield"></i> SYSTEM PRIVILEGE LEVEL: ADMIN MASTER</small>
+                <h1 style="margin: 0; font-size: 1.8rem; color: #ffffff;">CLASS MANAGEMENT CORE : STUDENT</h1>
+                <small style="color: #00d4ff;"><i class="fa fa-shield"></i> SYSTEM PRIVILEGE LEVEL: STUDENTS</small>
             </div>
             <button class="exit-btn" id="closeAdminBtn"><i class="fa fa-sign-out"></i> EXIT MATRIX</button>
         </header>
@@ -100,6 +91,7 @@
                         <a href="payments.html" class="action-link">Open Terminal</a>
                     </div>
                 </div>
+            </div>
                 
                 <div class="split-card">
                 <div class="card-accent">
@@ -108,7 +100,8 @@
                 </div>
                 <div class="card-body">
                     <p style="color: #cbd5e1; margin-top: 0; line-height: 1.5; font-size: 0.9rem;">
-                       Get updates on textbook payments, material cost distributions, and handovers. CR's updates on class or course activies.
+                       Get updates on textbook payments, material cost distributions, and handovers. 
+                       CR's updates on class or course activies.
                     </p>
                     <div>
                         <div class="card-stats">Updates Items: <span id="payCount" style="color:#fff;">0</span></div>
