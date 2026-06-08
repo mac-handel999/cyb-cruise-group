@@ -75,7 +75,7 @@ async function deployNewAttendanceSheet() {
     const titleInput = document.getElementById('lectureTitle');
     if (!titleInput || !titleInput.value.trim()) return;
 
-    const response = await fetch('/api/admin/attendance', {
+    const response = await fetch('http://localhost:5500/api/admin/attendance' || 'http://localhost:6700/api/admin/attendance', {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',

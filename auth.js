@@ -24,7 +24,7 @@ function reportStatus(message, isError = false) {
 async function initAuthHandshake() {
     try {
         reportStatus("Fetching database handshake signals...");
-        const response = await fetch('class-list.enc');
+        const response = await fetch('/class-list.enc');
         if (!response.ok) throw new Error();
         
         const encryptedData = await response.text();

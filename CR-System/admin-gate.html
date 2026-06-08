@@ -6,15 +6,7 @@
     <title>CYB CRUISE | Admin Gate</title>
     <link rel="stylesheet" href="/style.css">
     
-    <script type="text/javascript" charset="utf-8">
-       
-    // Only skip if a valid 3-day token is already active
-    if (localStorage.getItem('cruise_admin_token') && localStorage.getItem('cruise_admin_time')) {
-        window.location.href = 'admin-dashboard.html';
-    }
-
-
-    </script>
+   
 </head>
 <body style="background:#050b14; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0;">
 
@@ -32,86 +24,41 @@
         <div id="gateStatus" style="margin-top:15px; color:#00d4ff; font-family:monospace; font-size:0.75rem;"></div>
     </div>
 
+    
     <script>
-// Ensure this helper function exists at the top of your script block
-async function sha256(string) {
-    const utf8 = new TextEncoder().encode(string);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
-    return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
+    document.getElementById('authAdminBtn').addEventListener('click', async () => {
+        const input = document.getElementById('passphraseInput').value;
+        const status = document.getElementById('gateStatus');
 
-        document.getElementById('authAdminBtn').addEventListener('click', async () => {
-            const input = document.getElementById('passphraseInput').value;
-            const status = document.getElementById('gateStatus');
-            const targetHash = 
-            "6a24503fc9856b0a28d17f85b2b89a2d8465ed27a293c8a9b2967097117caa4d";// Replace with your target hash
-             
-            
-            status.textContent = "Computing cryptographic block...";
-            const inputHash = await sha256(input);
+        status.textContent = "Validating with server...";
 
-            if (inputHash === targetHash) {
-    status.style.color = "#00d4ff";
-    status.textContent = "Access Verified. Committing keys to disk layout...";
-    
-    // 1. Force state updates into localStorage
-    localStorage.setItem('cruise_admin_token', btoa("authorized_reps_active"));
-    localStorage.setItem('cruise_admin_time', btoa(String(Date.now())));
-    
-    // 2. Add an explicit delay (800ms) to ensure mobile flash storage completes the sync operation
-    setTimeout(() => {
-        status.textContent = "Routing to administrative command deck...";
-        
-        // Final safety double-check: ensure keys are written before breaking the page state
-        if (localStorage.getItem('cruise_admin_token')) {
-            window.location.href = 'admin-dashboard.html';
-        } else {
-            status.style.color = "#ff3333";
-            status.textContent = "Disk write lag detected. Retrying terminal link...";
-            window.location.href = 'admin-dashboard.html';
-        }
-    }, 800);
+        // Send the raw password to the server for verification
+        // The server will compare this against your env variable
+        const response = await fetch('http://localhost:5500/api/admin/login' || 'http://localhost:6700/api/admin/login', {
+            method: 'POST',
+        headers: {'Content-Type': 'application/json' },
+        body: JSON.stringify({password: input })
+        });
 
-} else {
-    status.style.color = "#ff3333";
-    status.textContent = "INVALID PASSPHRASE. AUTHENTICATION FAILURE.";
-}
-
-        })
-        
-        
-        
-        document.getElementById('authAdminBtn').addEventListener('click', async () => {
-    const input = document.getElementById('passphraseInput').value;
-    const status = document.getElementById('gateStatus');
-    
-    status.textContent = "Computing cryptographic block...";
-    const inputHash = await sha256(input);
-
-    if (inputHash === targetHash) {
+        if (response.ok) {
+            const data = await response.json();
         status.style.color = "#00d4ff";
-        status.textContent = "Access Verified. Provisioning 3-Day Session...";
-        
-        // 1. Generate an obfuscated 3-day validation flag and timestamp
-        const scrambledFlag = btoa("authorized_reps_active");
-        const scrambledTime = btoa(Date.now().toString());
+        status.textContent = "Access Verified. Routing...";
 
-        // 2. Commit seamlessly to localStorage for persistence across browser closings
-        localStorage.setItem('cruise_admin_token', scrambledFlag);
-        localStorage.setItem('cruise_admin_time', scrambledTime);
-        
-        document.getElementById('passphraseInput').value = "";
-        
-        setTimeout(() => { 
+        // Store the token returned by the server
+        localStorage.setItem('x-admin-token', data.token);
+            
+            setTimeout(() => {
             window.location.href = 'admin-dashboard.html'; 
-        }, 600);
-    } else {
-        status.style.color = "#800020";
+            }, 600);
+        } else {
+            status.style.color = "#800020";
         status.textContent = "INVALID PASSPHRASE. AUTHENTICATION FAILURE.";
-    }
-});
+        }
+    });
+</script>
 
-    </script>
+    
     
    <script src="/auth.js"></script>
     

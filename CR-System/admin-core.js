@@ -1,136 +1,75 @@
-// --- DATABASE DISK READING & WRITING CONTROLLER ---
-function loadAdminMatrix() {
-    const rawData = localStorage.getItem('cruise_admin_matrix');
-    if (!rawData) {
-        return { attendance: [], submissions: [], payments: [] };
-    }
-    try {
-        // Base64 Decode and parse back into standard programming Object layout
-        return JSON.parse(atob(rawData));
-    } catch (e) {
-        console.error("Database corruption detected. Initializing safety array fallback configuration.");
-        return { attendance: [], submissions: [], payments: [] };
-    }
+/**
+ * CYB CRUISE GROUP — SECURE ADMIN CORE ENGINE
+ * All operations are now routed through the server API Gateway.
+ */
+
+// Helper to get headers for all admin requests
+const getAuthHeaders = () => ({
+    'Content-Type': 'application/json',
+    'x-admin-token': localStorage.getItem('x-admin-token')
+});
+
+// --- FETCH DATA FROM SERVER ---
+async function fetchAdminMatrix() {
+    const [attendance, payments] = await Promise.all([
+        fetch('/api/attendance').then(res => res.json()),
+        fetch('/api/payments').then(res => res.json())
+    ]);
+    return { attendance, payments };
 }
 
-function saveAdminMatrix(matrixObject) {
-    // Stringify and scramble using Base64 before writing to local flash block
-    const scrambledString = btoa(JSON.stringify(matrixObject));
-    localStorage.setItem('cruise_admin_matrix', scrambledString);
-}
-
-// --- ADMINISTRATIVE NUMERICAL MATRIX METRICS ---
-function computeTaskMetrics(actionCount, totalClassCount = 241) {
-    const activeTotal = parseInt(actionCount) || 0;
-    const classTotal = parseInt(totalClassCount) || 241;
-    const remaining = classTotal - activeTotal;
-    const complianceRate = ((activeTotal / classTotal) * 180).toFixed(1); // Metric tracking output percent
-
-    return {
-        completed: activeTotal,
-        pending: remaining >= 0 ? remaining : 0,
-        totalClass: classTotal
-    };
-}
-
-// --- GLOBAL ATOMIC DESTROY PROTOCOL ---
-function clearSectionRecords(sectionKey) {
-    if (confirm(`⚠️ WARNING: You are executing a destructive database wipe on section [${sectionKey.toUpperCase()}]. This cannot be undone. Proceed?`)) {
-        const db = loadAdminMatrix();
-        if (db[sectionKey]) {
-            db[sectionKey] = []; // Purge the targeted matrix index array
-            saveAdminMatrix(db);
-            location.reload(); // Hard refresh to update UI state tracking variables
-        }
-    }
-}
-
-// --- CLIPBOARD WHATSAPP COURIER ENGINE ---
-function copyListToClipboard(title, headerLabel, studentListArray, allStudentsRoster) {
-    let outputText = `📝 *${title.toUpperCase()}* \n`;
-    outputText += `📅 Generated: ${new Date().toLocaleDateString()} | Node: CYB CRUISE\n`;
-    outputText += `-------------------------------------------\n`;
-    outputText += `👉 *STATUS LIST (${headerLabel.toUpperCase()}):* \n\n`;
-
-    if (studentListArray.length === 0) {
-        outputText += `[Empty List Trajectory]\n`;
-    } else {
-        studentListArray.forEach((regNum, index) => {
-            // Match the Reg against your pre-cached 241 master roster names
-            const studentMatch = allStudentsRoster.find(s => s.regNumber === regNum);
-            const studentName = studentMatch ? studentMatch.name.toUpperCase() : "UNVERIFIED IDENTITY NODE";
-            outputText += `${index + 1}. ${studentName} (${regNum})\n`;
+// --- SECURE DESTRUCTION PROTOCOL ---
+async function clearSectionRecords(sectionKey) {
+    if (confirm(`⚠️ WARNING: Wiping ${sectionKey}. This is a destructive server-side operation.`)) {
+        // You should define a DELETE route in server.js for this
+        const response = await fetch(`/api/admin/wipe/${sectionKey}`, {
+            method: 'DELETE',
+            headers: getAuthHeaders()
         });
+        
+        if (response.ok) location.reload();
+        else alert("Security breach or unauthorized access.");
     }
+}
 
-    const metrics = computeTaskMetrics(studentListArray.length);
-    outputText += `\n-------------------------------------------\n`;
-    outputText += `📊 *SUMMARY METRICS:*\n`;
-    outputText += `• Action Count: ${metrics.completed}\n`;
-    outputText += `• Pending Vector: ${metrics.pending}\n`;
-    outputText += `• Total Base Class: ${metrics.totalClass}\n`;
-    outputText += `\nEngineered By {FABIAN CODES HQ}`;
+// --- WHATSAPP COURIER (Updated to use server-data) ---
+function copyListToClipboard(title, studentArray, allStudentsRoster) {
+    let outputText = `📝 *${title.toUpperCase()}* \n`;
+    outputText += `📅 ${new Date().toLocaleDateString()} | CYB CRUISE\n`;
+    outputText += `-------------------------------------------\n`;
+    
+    studentArray.forEach((s, idx) => {
+        const match = allStudentsRoster.find(r => r.regNumber === s.regNumber);
+        outputText += `${idx + 1}. ${match?.name.toUpperCase() || "UNKNOWN"} (${s.regNumber})\n`;
+    });
 
     navigator.clipboard.writeText(outputText).then(() => {
-        alert("🚀 Payload formatted and copied to clipboard! You can now paste it directly into WhatsApp.");
-    }).catch(err => {
-        alert("Clipboard integration blocked by security protocol. Copy manually.");
+        alert("🚀 Payload copied to system clipboard.");
     });
 }
 
+// --- SECURE TASK GENERATION ---
+async function createNewTaskRecord(sectionKey, titleValue) {
+    if (!titleValue.trim()) return alert("Title required.");
 
+    const response = await fetch(`/api/admin/${sectionKey}`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ title: titleValue })
+    });
 
-
-
-// --- DYNAMIC TASK GENERATION MECHANISM ---
-function createNewTaskRecord(sectionKey, inputTitleId) {
-    const titleInput = document.getElementById(inputTitleId);
-    if (!titleInput || !titleInput.value.trim()) {
-        alert("Integrity check failed: Item configuration description cannot be empty.");
-        return;
-    }
-
-    const db = loadAdminMatrix();
-    const newTask = {
-        id: "task_" + Date.now(), // Unique ID based on time
-        title: titleInput.value.trim(),
-        date: new Date().toISOString().split('T')[0],
-        students: [],
-        paidStudents: [],      // Used for payment tracking sheets
-        collectedStudents: []  // Used for payment tracking sheets
-    };
-
-    db[sectionKey].push(newTask);
-    saveAdminMatrix(db);
-    titleInput.value = ""; // Clear form input element
-    location.reload();     // Re-render display states
+    if (response.ok) location.reload();
+    else alert("Access denied.");
 }
 
-// --- ACTIVE STUDENT ROSTER INCLUSION TOGGLE ---
-function toggleStudentInTask(sectionKey, taskId, studentRegNumber, arrayProperty = "students") {
-    const db = loadAdminMatrix();
-    const task = db[sectionKey].find(t => t.id === taskId);
+// --- SECURE TOGGLE ---
+async function toggleStudentInTask(taskId, regNumber, action = 'add') {
+    const method = action === 'add' ? 'POST' : 'DELETE';
+    const response = await fetch(`/api/admin/attendance/${taskId}/students/${regNumber}`, {
+        method: method,
+        headers: getAuthHeaders()
+    });
     
-    if (!task) return;
-
-    // Safety initialization check
-    if (!task[arrayProperty]) task[arrayProperty] = [];
-
-    const index = task[arrayProperty].indexOf(studentRegNumber);
-    if (index === -1) {
-        // Not in list -> Inject element record
-        task[arrayProperty].push(studentRegNumber);
-    } else {
-        // Already in list -> Splice element record out
-        task[arrayProperty].splice(index, 1);
-    }
-    
-    saveAdminMatrix(db);
+    if (!response.ok) alert("Unauthorized modification attempt.");
+    // UI refreshes automatically via the real-time listener (Firebase)
 }
-
-
-
-
-
-        
-        

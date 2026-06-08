@@ -142,16 +142,22 @@
 
 
 
-
-
+<script src="admin-guard.js"></script>
+<script src="admin-core.js"></script>
 <script src="/main.js"></script>
 
+<script>
+    window.onload = async () => {
+            console.log("Checking if functions exist:", typeof window.fetchAdminMatrix);
+            // ... logic
+        };
+</script>
 
-
-    <script src="admin-core.js"></script>
     
     
 
 <script src="admin-dashboard.js"></script>
+
+
 </body>
 </html>

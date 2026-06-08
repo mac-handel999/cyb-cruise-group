@@ -1,3 +1,7 @@
+
+
+
+
 require('dotenv').config();
 const express = require('express');
 const admin = require('firebase-admin');
@@ -6,6 +10,17 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+
+// Add this at the top of server.js
+app.use(cors({
+    origin: '*', // For development only. Restrict this in production.
+    methods: ['GET', 'POST', 'DELETE']
+}));
+
+
+// This tells Express to serve any files in your current directory
+app.use(express.static(__dirname));
 
 // Initialize Firebase
 const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT 
@@ -114,6 +129,42 @@ app.post('/api/admin/attendance', isAdmin, async (req, res) => {
     res.sendStatus(200);
 });
 
+app.post('/api/admin/login', (req, res) => {
+    const { password } = req.body;
+    
+    // Compare against the secret stored in your .env file
+    if (password === process.env.ADMIN_SECRET_PASSWORD) {
+        // Return the token that the frontend will use for future requests
+        res.status(200).json({ token: process.env.ADMIN_SECRET_PASSWORD });
+    } else {
+        res.status(403).send("Unauthorized");
+    }
+});
+
+
+app.get('/api/admin/verify', isAdmin, (req, res) => {
+    res.sendStatus(200); // If it reaches here, the middleware already validated it
+});
+
+
+
 // --- SERVER START ---
 const PORT = process.env.PORT || 6700;
+
+// Run check every 1 hour
+setInterval(async () => {
+    const snapshot = await db.ref('management/attendance').once('value');
+    const data = snapshot.val();
+    if (!data) return;
+
+    const now = Date.now();
+    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+
+    Object.keys(data).forEach(async (taskId) => {
+        if (data[taskId].createdAt && (now - data[taskId].createdAt >= TWENTY_FOUR_HOURS_MS)) {
+            await db.ref(`management/attendance/${taskId}`).remove();
+        }
+    });
+}, 3600000);
+
 app.listen(PORT, () => console.log(`Secure gateway active on port ${PORT}`));
